@@ -1,0 +1,23 @@
+<!-- Bottom Navigation Bar menu xml   -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_plan"
+        android:title="Courses"
+        android:icon="@drawable/courses"
+        />
+    <item
+        android:id="@+id/nav_go"
+        android:title="Homework"
+        android:icon="@drawable/homework"
+        />
+    <item
+        android:id="@+id/nav_wellness"
+        android:title="Office Hours"
+        android:icon="@drawable/office"
+        />
+    <item
+        android:id="@+id/nav_degree_planner"
+        android:title="Degree Planner"
+        android:icon="@drawable/degree_planner"/>
+</menu>

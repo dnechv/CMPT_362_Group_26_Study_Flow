@@ -40,6 +40,9 @@ android {
 
 dependencies {
 
+    //google ar code implementation
+    implementation("com.google.ar:core:1.27.0")
+
     //cardview
     implementation("androidx.cardview:cardview:1.0.0")
 

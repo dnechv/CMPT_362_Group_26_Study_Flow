@@ -5,15 +5,16 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Past Term Fragment -->
+    <!-- Transit Fragment  -->
+
 
     <TextView
-        android:id="@+id/past_term_label"
+        android:id="@+id/future_term_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Transit  Fragment"
         android:textSize="18sp"
         android:textStyle="bold" />
-
 
 
 </LinearLayout>

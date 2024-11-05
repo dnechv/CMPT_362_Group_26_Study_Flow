@@ -2,22 +2,24 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_plan"
+        android:id="@+id/nav_courses"
         android:title="Courses"
         android:icon="@drawable/courses"
         />
     <item
-        android:id="@+id/nav_go"
+        android:id="@+id/nav_homework"
         android:title="Homework"
         android:icon="@drawable/homework"
         />
     <item
-        android:id="@+id/nav_wellness"
-        android:title="Office Hours"
-        android:icon="@drawable/office"
+        android:id="@+id/nav_office_hours"
+        android:title="Progress"
+        android:icon="@drawable/progress"
         />
+
     <item
-        android:id="@+id/nav_degree_planner"
-        android:title="Degree Planner"
-        android:icon="@drawable/degree_planner"/>
+        android:id="@+id/nav_transit"
+        android:title="Transit"
+        android:icon="@drawable/transit"
+        />
 </menu>

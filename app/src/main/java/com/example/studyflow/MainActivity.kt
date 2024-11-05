@@ -12,26 +12,22 @@ package com.example.studyflow
 
 //imports
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.example.studyflow.fragments.courses_fragment
+import com.example.studyflow.fragments.homework_fragment
+import com.example.studyflow.fragments.progress_fragment
+import com.example.studyflow.fragments.transit_fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
+
+//firebase imports
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 //bottom nav bar
-import androidx.fragment.app.Fragment
-import com.example.studyflow.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 //tab bar imports
-import androidx.viewpager2.widget.ViewPager2
-import com.example.studyflow.adapters.fragment_adapter
-import com.example.studyflow.fragments.current_term_fragment
-import com.example.studyflow.fragments.futurte_term_fragment
-import com.example.studyflow.fragments.past_terms_fragment
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
-import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,51 +35,71 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-        //setting up the top bar with tabs
+
+        //setting up the top bar with tabs - must be called first
         setContentView(R.layout.activity_main)
 
 
-        //setting up the top bar with tabs
-        val tabLayout = findViewById<TabLayout>(R.id.menu_top_tab)
-        val viewPager2 = findViewById<ViewPager2>(R.id.viewpager_tab)
+        //getting the bottom nav bar from xml
+        val bottomNavigationBar = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
+        //default to courses
+        loadFragment(courses_fragment())
 
-        //setting up the viewpager with tabs
-        //fragments
-        val  fragments = ArrayList<Fragment>()
+        //firebase database variable
+        val firebaseDataBase = FirebaseFirestore.getInstance()
 
+        //setting up the bar to switch bewteen fragments when tapped
+        bottomNavigationBar.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_courses -> {
+                    //switch courses fragment using loadFragment function
+                    loadFragment(courses_fragment())
 
-        //adding fragments to the list
-        fragments.add(past_terms_fragment())
-        fragments.add(current_term_fragment())
-        fragments.add(futurte_term_fragment())
+                    true
+                }
+                R.id.nav_homework -> {
+                    //switch to homework fragment using loadFragment function
+                    loadFragment(homework_fragment())
+                    true
+                }
+                R.id.nav_office_hours -> {
+                    //switch to progress fragment using loadFragment function
+                    loadFragment(progress_fragment())
+                    true
+                }
+                R.id.nav_transit -> {
+                    //switch to transit using loadFragment function
+                    loadFragment(transit_fragment())
 
-        //fragment adapter
-        val adapter = fragment_adapter(this, fragments)
-        viewPager2.adapter = adapter
-
-        //connecting tabLayout to viewPager
-        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
-
-            //setting the title for each tab
-            when (position) {
-                0 -> tab.text = "Past Term"
-                1 -> tab.text = "Current Term"
-                2 -> tab.text = "Future Term"
+                    true
+                }
+                else -> false
             }
-        }.attach() // attach finalizes the connection
+        }
 
 
 
 
 
-        //bottom navigation bar
 
-        //finding bottom navigation view by id
-        //val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
-        //TODO-when tapped switch between different fragments when tapped
+
 
 
         }
+
+    //function to load fragment in a fragment container ->takes fragment as an argument
+    private fun loadFragment(fragment: Fragment) {
+
+
+        //create fragment transaction
+        val transaction = supportFragmentManager.beginTransaction()
+        //replace the fragment container with the fragment
+        transaction.replace(R.id.fragment_container, fragment)
+        //add the transaction to the back stack
+        transaction.addToBackStack(null)
+        //commit the transaction
+        transaction.commit()
+    }
     }

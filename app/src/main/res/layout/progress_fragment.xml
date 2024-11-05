@@ -5,13 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Office Hour Fragment xml -->
+    <!-- Progress Fragment xml -->
 
     <TextView
         android:id="@+id/office_hours_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Office Hours"
+        android:text="Progress Fragment"
         android:textSize="18sp"
         android:textStyle="bold" />
 

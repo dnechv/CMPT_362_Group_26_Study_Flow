@@ -7,7 +7,7 @@ import java.util.ArrayList
 
 //provides correct fragment to display
 
-class fragment_adapter(activity: FragmentActivity, var list: ArrayList<Fragment>)
+class FragmentAdapter(activity: FragmentActivity, var list: ArrayList<Fragment>)
     : FragmentStateAdapter(activity) {
 
     override fun createFragment(position: Int): Fragment {

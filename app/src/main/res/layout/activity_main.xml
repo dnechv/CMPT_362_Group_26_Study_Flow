@@ -4,22 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- TabLayout -> creates tab navigation -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/menu_top_tab"
+    <!-- fragment container to hold framgents -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!-- ViewPager2 -> allows swiping between fragments -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewpager_tab"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
 
-    <!-- BottomNavigationView for navigation bar -->
+    <!-- bottom navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"

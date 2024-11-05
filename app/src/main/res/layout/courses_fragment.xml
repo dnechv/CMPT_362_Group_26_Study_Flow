@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Courses Fragment -->
+
+    <TextView
+        android:id="@+id/past_term_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="Courses Fragment"
+        android:textStyle="bold" />
+
+    <!-- RecyclerView - displays courses -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_courses"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp" />
+
+    <!--Button to add new course -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/courses_fragment_add_course_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/add_course"
+        android:contentDescription="Add Course"
+        android:layout_marginBottom="100dp"
+        app:backgroundTint="@color/material_dynamic_neutral90" />
+
+
+
+</LinearLayout>

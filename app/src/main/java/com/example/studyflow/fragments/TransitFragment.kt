@@ -4,17 +4,32 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.mapbox.maps.MapView
 import com.example.studyflow.R
+import com.example.studyflow.view_models.TransitViewModel
+import com.mapbox.bindgen.Expected
+import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.CoordinateBounds
-import com.mapbox.maps.plugin.scalebar.scalebar
+import com.mapbox.maps.QueriedRenderedFeature
+import com.mapbox.maps.RenderedQueryGeometry
+import com.mapbox.maps.RenderedQueryOptions
+import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.attribution.attribution
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.plugin.logo.logo
 
 // This fragment allows the user to see transit options
-class TransitFragment : Fragment() {
+class TransitFragment : Fragment(), OnMapClickListener {
+    private val viewModel: TransitViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,13 +40,58 @@ class TransitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         val mapView = view.findViewById<MapView>(R.id.map_view)
-        mapView.scalebar.enabled = false
-        mapView.mapboxMap.setBounds(CameraBoundsOptions.Builder().bounds(CoordinateBounds(
-            Point.fromLngLat(-123.422, 48.95),
-            Point.fromLngLat(-122.072, 49.49)
-        )).build())
+
+        mapView.mapboxMap.apply {
+            setBounds(
+                CameraBoundsOptions.Builder().bounds(
+                    CoordinateBounds( // TransLink does not operate beyond these bounds
+                        Point.fromLngLat(-123.422, 48.95),
+                        Point.fromLngLat(-122.072, 49.49)
+                    )
+                ).build()
+            )
+            addOnMapClickListener(this@TransitFragment)
+        }
 
         ViewCompat.requestApplyInsets(view)
+    }
+
+    override fun onMapClick(point: Point): Boolean {
+        println(point.coordinates())
+        val mapView = view?.findViewById<MapView>(R.id.map_view) ?: return false
+        val name = requireView().findViewById<TextView>(R.id.name)
+        val subtitle = requireView().findViewById<TextView>(R.id.subtitle)
+        mapView.mapboxMap.apply {
+            queryRenderedFeatures(
+                RenderedQueryGeometry(pixelForCoordinate(point)),
+                RenderedQueryOptions(listOf("Translink Bus Stops Label"), null)
+            ) {
+                onFeatureClick(it, {
+                    name.text = ""
+                    subtitle.text = ""
+                }) { feature ->
+                    flyTo(CameraOptions.Builder().zoom(17.0).center(point).build())
+                    val stationName = feature.properties()?.get("name")?.asString ?: ""
+                    val stationId = feature.properties()?.get("ref")?.asInt
+                    name.text = stationName
+                    subtitle.text = stationId?.toString() ?: ""
+                }
+            }
+        }
+        return true
+    }
+
+    private fun onFeatureClick(
+        expected: Expected<String, List<QueriedRenderedFeature>>,
+        noFeatureCallback: () -> Unit,
+        featureCallback: (Feature) -> Unit
+    ) {
+        if (expected.isValue && expected.value?.size!! > 0) {
+            featureCallback.invoke(expected.value!![0].queriedFeature.feature)
+        } else {
+            noFeatureCallback.invoke()
+        }
     }
 }

@@ -8,30 +8,34 @@ import com.example.studyflow.database_cloud.Courses
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-// Manages the flow of data between repository and UI for courses
+//manages the data for the courses
 class CoursesViewModel : ViewModel() {
 
+    //repository variable
     private val coursesRepository = CoursesRepository()
 
-    // LiveData variable to observe changes
+    //livedata -> observe changes in the data
     private val _courses = MutableLiveData<List<Courses>>()
     val courses: LiveData<List<Courses>> get() = _courses
 
-    // Function to get courses from the database
+    //get courses from the database
     fun getCourses() {
         coursesRepository.getCourses { courses ->
             _courses.value = courses
         }
     }
 
-    // Function to add course to the database
+
+
+    //add course to the database + update the UI
     fun addCourse(course: Courses) {
-        coursesRepository.addCourse(course) // No callbacks needed here
+        coursesRepository.addCourse(course)
+        _courses.value = _courses.value?.plus(course)
     }
 
-    // Function to delete course from the database
+    //delete the course from database
     fun deleteCourse(course: Courses) {
         Log.d("CoursesViewModel", "Attempting to add course: $course")
-        coursesRepository.deleteCourse(course) // No callbacks needed here
+        coursesRepository.deleteCourse(course)
     }
 }

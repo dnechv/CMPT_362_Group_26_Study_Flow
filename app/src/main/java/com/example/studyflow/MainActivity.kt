@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 //firebase imports
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.FirebaseApp
 
 
 //bottom nav bar
@@ -51,8 +52,13 @@ class MainActivity : AppCompatActivity() {
         //default to courses
         loadFragment(courses_fragment())
 
+        //initialize firebase
+        FirebaseApp.initializeApp(this)
+
         //firebase database variable
-        val firebaseDataBase = FirebaseFirestore.getInstance()
+       // val firebaseDataBase = FirebaseFirestore.getInstance()
+
+
 
         //setting up the bar to switch bewteen fragments when tapped
         bottomNavigationBar.setOnItemSelectedListener { item ->

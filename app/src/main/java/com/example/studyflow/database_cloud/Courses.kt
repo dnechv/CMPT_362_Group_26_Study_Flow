@@ -1,22 +1,20 @@
 package com.example.studyflow.database_cloud
 
-
-//import for date
+//date import
 import java.util.Date
 
-//contains data model for courses
-
+//data model for courses
 data class Courses(
-    val courseName: String = "",
     val courseCode: String = "",
-    val courseTerm: String = "",
+    val courseDays: String = "",
     val courseDescription: String = "",
+    val courseEndDate: Date? = null,
+    val courseEndTime: String = "",
     val courseInstructor: String = "",
     val courseInstructorEmail: String = "",
-    val courseStartDate: Date? = null,
-    val courseEndDate: Date? = null,
-    val courseDays: String = "",
-    val courseStartTime: String = "",
-    val courseEndTime: String = "",
     val courseLocation: String = "",
+    val courseName: String = "",
+    val courseStartDate: Date? = null,
+    val courseStartTime: String = "",
+    val courseTerm: String = ""
 )

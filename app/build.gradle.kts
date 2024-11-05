@@ -40,6 +40,9 @@ android {
 
 dependencies {
 
+    //google ar code implementation
+    implementation("com.google.ar:core:1.27.0")
+
     //cardview
     implementation("androidx.cardview:cardview:1.0.0")
 
@@ -59,7 +62,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore.ktx) //firestore for firebase
     implementation(libs.androidx.fragment.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

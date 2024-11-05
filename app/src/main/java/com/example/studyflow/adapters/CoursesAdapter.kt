@@ -22,8 +22,8 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
 
         //binding data to views
         fun bind(course: Courses) {
-            courseName.text = course.courseName
-            courseTerm.text = course.courseTerm // Assuming `courseTerm` is a property in Courses model
+            courseName.text = course.courseName //setting the course name
+            courseTerm.text = course.courseTerm //setting the course term
         }
     }
 

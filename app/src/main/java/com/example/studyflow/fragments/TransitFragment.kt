@@ -21,10 +21,8 @@ import com.mapbox.maps.QueriedRenderedFeature
 import com.mapbox.maps.RenderedQueryGeometry
 import com.mapbox.maps.RenderedQueryOptions
 import com.mapbox.maps.plugin.animation.flyTo
-import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
-import com.mapbox.maps.plugin.logo.logo
 
 // This fragment allows the user to see transit options
 class TransitFragment : Fragment(), OnMapClickListener {
@@ -72,7 +70,7 @@ class TransitFragment : Fragment(), OnMapClickListener {
                     name.text = ""
                     subtitle.text = ""
                 }) { feature ->
-                    flyTo(CameraOptions.Builder().zoom(17.0).center(point).build())
+                    flyTo(CameraOptions.Builder().zoom(18.0).center(point).build())
                     val stationName = feature.properties()?.get("name")?.asString ?: ""
                     val stationId = feature.properties()?.get("ref")?.asInt
                     name.text = stationName

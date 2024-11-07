@@ -13,16 +13,15 @@ class HomeworkRepository {
         private val firebaseDataBase = FirebaseFirestore.getInstance()
 
     //function to add homework to the database
-    fun addHomework(homework: Homework, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    fun addHomework(homework: Homework) {
         firebaseDataBase.collection("homework").document() //generates unique id - avoid overwriting data
             .set(homework)
             .addOnSuccessListener {
                 Log.d("HomeworkRepository", "Homework added successfully")
-                onSuccess()
             }
             .addOnFailureListener { exception ->
                 Log.d("HomeworkRepository", "Failed to add homework", exception)
-                onFailure(exception)
+
             }
     }
 

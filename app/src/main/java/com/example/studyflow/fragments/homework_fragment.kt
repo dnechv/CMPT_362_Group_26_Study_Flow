@@ -33,7 +33,7 @@ private lateinit var CViewModel : CoursesViewModel
 private lateinit var homeworkAdapter : HomeworkAdapter
 private lateinit var addHWBtn : FloatingActionButton
 
-//mikham ye list az course ha begiram, entekhab mikone , name esho migram, bad dialog badi moshakhasat, bad save
+
 
 class homework_fragment : Fragment() {
     override fun onCreateView(

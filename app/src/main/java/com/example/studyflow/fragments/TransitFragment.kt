@@ -56,7 +56,6 @@ class TransitFragment : Fragment(), OnMapClickListener {
     }
 
     override fun onMapClick(point: Point): Boolean {
-        println(point.coordinates())
         val mapView = view?.findViewById<MapView>(R.id.map_view) ?: return false
         val name = requireView().findViewById<TextView>(R.id.name)
         val subtitle = requireView().findViewById<TextView>(R.id.subtitle)

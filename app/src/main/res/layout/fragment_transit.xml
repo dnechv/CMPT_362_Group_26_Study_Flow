@@ -17,7 +17,7 @@
         app:mapbox_cameraTargetLng="-122.92"
         app:mapbox_cameraZoom="11.0"
         app:mapbox_scaleBarEnabled="false"
-        app:mapbox_styleUri="mapbox://styles/cyrusqng/cm34315d000ij01q21tnkbih2" />
+        app:mapbox_styleUri="mapbox://styles/cyrusqng/cm38qzmej009t01q7gago6aoe" />
 
     <LinearLayout
         android:id="@+id/info_panel"
@@ -30,7 +30,7 @@
 
         <TextView
             android:id="@+id/name"
-            style="?attr/textAppearanceDisplaySmall"
+            style="?attr/textAppearanceHeadlineLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""

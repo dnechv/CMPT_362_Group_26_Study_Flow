@@ -38,7 +38,6 @@ class TransitFragment : Fragment(), OnMapClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val mapView = view.findViewById<MapView>(R.id.map_view)
 
         mapView.mapboxMap.apply {
@@ -64,16 +63,19 @@ class TransitFragment : Fragment(), OnMapClickListener {
         mapView.mapboxMap.apply {
             queryRenderedFeatures(
                 RenderedQueryGeometry(pixelForCoordinate(point)),
-                RenderedQueryOptions(listOf("Translink Bus Stops Label"), null)
+                RenderedQueryOptions(listOf("translink-stops"), null)
             ) {
                 onFeatureClick(it, {
                     name.text = ""
                     subtitle.text = ""
                 }) { feature ->
                     flyTo(CameraOptions.Builder().zoom(18.0).center(point).build())
-                    val stationName = feature.properties()?.get("name")?.asString ?: ""
-                    val stationId = feature.properties()?.get("ref")?.asInt
+                    val stationName = feature.properties()?.get("stop_name")?.asString ?: ""
+                    val stationId = feature.properties()?.get("stop_code")?.asInt
                     name.text = stationName
+                        .replace(Regex("^Westbound"), "WB")
+                        .replace(Regex("^Eastbound"), "EB")
+                        .replace(Regex("@"), "at")
                     subtitle.text = stationId?.toString() ?: ""
                 }
             }

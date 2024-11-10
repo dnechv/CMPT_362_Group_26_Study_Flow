@@ -8,6 +8,16 @@ import com.example.studyflow.database_cloud.Courses
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
+
+/*
+Google Firebase Integration: Authentication via firebase, Cloud Storage, Cloud Storage Sync with Local Storage
+Translink API for bus updates,
+new tab layout design at the bottom of the screen,
+Animation between switching fragments, Google AR Co
+re.
+
+ */
+
 //manages the data for the courses
 class CoursesViewModel : ViewModel() {
 

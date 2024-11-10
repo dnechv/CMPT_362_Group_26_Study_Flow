@@ -7,7 +7,7 @@ package com.example.studyflow
 // 4 tabs on the bottom
 
 //TODO - Login using firebase auth
-//
+//TODO Offline mode <-> use local storage
 
 
 //imports

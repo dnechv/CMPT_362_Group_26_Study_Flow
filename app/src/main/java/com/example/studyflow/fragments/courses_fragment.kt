@@ -20,6 +20,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class courses_fragment : Fragment() {
 
+
+    //variables
     private lateinit var coursesViewModel: CoursesViewModel
     private lateinit var coursesAdapter: CoursesAdapter
 
@@ -56,9 +58,9 @@ class courses_fragment : Fragment() {
 
         //observe changes + update the adapter
         coursesViewModel.courses.observe(viewLifecycleOwner) { courses ->
-            Log.d("CoursesFragment", "Courses observed: $courses") // Log fetched courses
+            Log.d("CoursesFragment", "Courses observed: $courses") // log fetched courses
             if (!courses.isNullOrEmpty()) {
-                coursesAdapter.updateCourses(courses) // This method should call notifyDataSetChanged()
+                coursesAdapter.updateCourses(courses)
             } else {
                 Log.d("CoursesFragment", "No courses found.")
             }

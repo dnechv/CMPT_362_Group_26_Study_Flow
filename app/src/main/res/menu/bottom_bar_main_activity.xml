@@ -20,6 +20,6 @@
     <item
         android:id="@+id/nav_transit"
         android:title="Transit"
-        android:icon="@drawable/transit"
+        android:icon="@drawable/baseline_commute_24"
         />
 </menu>

@@ -1,8 +1,6 @@
 package com.example.studyflow
 
 
-
-
 //main_activity - shows main screen with term - 3 tab views on the top
 // 4 tabs on the bottom
 
@@ -12,15 +10,16 @@ package com.example.studyflow
 
 //imports
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.studyflow.fragments.courses_fragment
 import com.example.studyflow.fragments.homework_fragment
 import com.example.studyflow.fragments.progress_fragment
-import com.example.studyflow.fragments.transit_fragment
+import com.example.studyflow.fragments.TransitFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
-
 
 
 //firebase imports
@@ -36,10 +35,15 @@ import com.google.firebase.FirebaseApp
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        enableEdgeToEdge()
 
         //setting up the top bar with tabs - must be called first
         setContentView(R.layout.activity_main)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            insets
+        }
 
 
         //getting the bottom nav bar from xml
@@ -65,36 +69,32 @@ class MainActivity : AppCompatActivity() {
 
                     true
                 }
+
                 R.id.nav_homework -> {
                     //switch to homework fragment using loadFragment function
                     loadFragment(homework_fragment())
                     true
                 }
+
                 R.id.nav_office_hours -> {
                     //switch to progress fragment using loadFragment function
                     loadFragment(progress_fragment())
                     true
                 }
+
                 R.id.nav_transit -> {
                     //switch to transit using loadFragment function
-                    loadFragment(transit_fragment())
+                    loadFragment(TransitFragment())
 
                     true
                 }
+
                 else -> false
             }
         }
 
 
-
-
-
-
-
-
-
-
-        }
+    }
 
     //function to load fragment in a fragment container ->takes fragment as an argument
     private fun loadFragment(fragment: Fragment) {
@@ -102,6 +102,8 @@ class MainActivity : AppCompatActivity() {
 
         //create fragment transaction
         val transaction = supportFragmentManager.beginTransaction()
+        // set fade in/out animations
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
         //replace the fragment container with the fragment
         transaction.replace(R.id.fragment_container, fragment)
         //add the transaction to the back stack
@@ -109,4 +111,4 @@ class MainActivity : AppCompatActivity() {
         //commit the transaction
         transaction.commit()
     }
-    }
+}

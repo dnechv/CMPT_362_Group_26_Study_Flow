@@ -20,6 +20,8 @@ android {
 
 
 
+
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -55,6 +57,13 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
 
+    implementation ("com.mapbox.maps:android:11.7.1")
+
+
+
+    implementation(libs.mapbox.android)
+
+
     implementation(libs.mapbox.android)
 
     implementation(libs.androidx.core.ktx)
@@ -68,3 +77,4 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+

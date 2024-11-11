@@ -24,6 +24,10 @@ import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 
+
+
+//mapbox import
+
 // This fragment allows the user to see transit options
 class TransitFragment : Fragment(), OnMapClickListener {
     private val viewModel: TransitViewModel by viewModels()
@@ -37,6 +41,10 @@ class TransitFragment : Fragment(), OnMapClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+
+
 
         val mapView = view.findViewById<MapView>(R.id.map_view)
 

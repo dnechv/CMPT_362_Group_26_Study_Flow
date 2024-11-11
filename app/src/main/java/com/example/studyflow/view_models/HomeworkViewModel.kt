@@ -1,6 +1,7 @@
 package com.example.studyflow.view_models
 
 //imports
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.studyflow.repository.HomeworkRepository
 import com.example.studyflow.database_cloud.Homework
@@ -22,8 +23,9 @@ class HomeworkViewModel:ViewModel() {
     val homework: LiveData<List<Homework>> get() = _homework
 
     //function to add homework to the database
-    fun addHomework(homework: Homework, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        homeworkRepository.addHomework(homework, onSuccess, onFailure)
+    fun addHomework(homework: Homework) {
+        homeworkRepository.addHomework(homework)
+        _homework.value = _homework.value?.plus(homework)
     }
 
     //function to get homework from the database

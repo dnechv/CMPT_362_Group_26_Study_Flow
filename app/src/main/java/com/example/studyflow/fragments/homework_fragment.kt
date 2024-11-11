@@ -142,7 +142,7 @@ class homework_fragment : Fragment() {
             if (HWName.isNotEmpty() && HWDueTime.isNotEmpty()) {
                 val newHW = Homework(homeworkName = HWName, homeworkDueTime = HWDueTime, courseName = courseName)
                 homeworkViewModel.addHomework(newHW) // Add the hw
-                homeworkViewModel.getHomework() //refresh
+               // homeworkViewModel.getHomework() //refresh
                 dialog.dismiss()
             } else {
                 dialogView.findViewById<EditText>(R.id.nameET).error = "Field required"

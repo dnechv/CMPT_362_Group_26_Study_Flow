@@ -24,14 +24,19 @@ class HomeworkViewModel:ViewModel() {
 
     //function to add homework to the database
     fun addHomework(homework: Homework) {
+
+        // First, add it to the local list
+        _homework.value = _homework.value?.plus(homework) ?: listOf(homework)
+
+        // Then, push it to Firebase
         homeworkRepository.addHomework(homework)
-        _homework.value = _homework.value?.plus(homework)
     }
 
     //function to get homework from the database
     fun getHomework() {
         homeworkRepository.getHomework { homework ->
             _homework.value = homework
+
         }
     }
 

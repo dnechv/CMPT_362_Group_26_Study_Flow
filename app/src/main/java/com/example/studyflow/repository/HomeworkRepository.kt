@@ -12,9 +12,9 @@ class HomeworkRepository {
         //creating database variable
         private val firebaseDataBase = FirebaseFirestore.getInstance()
 
-    //function to add homework to the database
+    //adds homework to the database
     fun addHomework(homework: Homework) {
-        firebaseDataBase.collection("homework").document() //generates unique id - avoid overwriting data
+        firebaseDataBase.collection("homework").document()
             .set(homework)
             .addOnSuccessListener {
                 Log.d("HomeworkRepository", "Homework added successfully")

@@ -66,4 +66,17 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         courses.add(course)
         notifyItemInserted(courses.size - 1)
     }
+
+
+
+    //get position of courses -> used for swipe gesture
+    fun getCourseAtPosition(position: Int): Courses {
+        return courses[position]
+    }
+
+    //restore course -> used for swipe gesture
+    fun restoreCourse(course: Courses, position: Int) {
+        courses.add(position, course)
+        notifyItemInserted(position)
+    }
 }

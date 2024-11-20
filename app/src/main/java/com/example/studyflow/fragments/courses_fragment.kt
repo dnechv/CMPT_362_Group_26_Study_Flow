@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studyflow.R
 import com.example.studyflow.adapters.CoursesAdapter
+import com.example.studyflow.animation.SwipeGesture
 import com.example.studyflow.database_cloud.Courses
 import com.example.studyflow.view_models.CoursesViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -52,6 +54,13 @@ class courses_fragment : Fragment() {
 
         //setting the layout manager
         recyclerView.layoutManager = LinearLayoutManager(context)
+
+        //create swipe gesture
+        val swipeGesture = SwipeGesture(coursesAdapter)
+        val itemTouchHelper = ItemTouchHelper(swipeGesture)
+
+        //attach swipe gesture to recycler view
+        itemTouchHelper.attachToRecyclerView(recyclerView)
 
         //connecting adapter with recycler view
         recyclerView.adapter = coursesAdapter

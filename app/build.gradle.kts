@@ -60,6 +60,11 @@ dependencies {
     implementation ("com.mapbox.maps:android:11.7.1")
 
 
+    //swiping animation
+    implementation ("androidx.recyclerview:recyclerview:1.3.1")
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+
+
 
     implementation(libs.mapbox.android)
 

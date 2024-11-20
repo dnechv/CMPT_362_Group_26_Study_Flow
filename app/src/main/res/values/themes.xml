@@ -1,8 +1,35 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme -->
+
+
     <style name="Base.Theme.StudyFlow" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+
+
+
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary color-->
+        <item name="colorSecondary">@color/accentColor</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Background color -->
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="colorSurface">@color/backgroundColor</item>
+        <item name="colorOnSurface">@color/textPrimaryColor</item>
+
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/textPrimaryColor</item>
+        <item name="android:textColorSecondary">@color/textSecondaryColor</item>
+
+
+
+
+
+
+
     </style>
 
     <style name="Theme.StudyFlow" parent="Base.Theme.StudyFlow" />

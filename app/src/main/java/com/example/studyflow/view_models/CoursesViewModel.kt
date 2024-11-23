@@ -7,6 +7,9 @@ import com.example.studyflow.repository.CoursesRepository
 import com.example.studyflow.database_cloud.Courses
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.launch
 
 
 /*
@@ -34,6 +37,25 @@ class CoursesViewModel : ViewModel() {
             _courses.value = courses
         }
     }
+
+//update course
+    fun updateCourse(course: Courses) {
+        val courseId = course.id
+
+        //get reference to firebase
+        val databaseReference = FirebaseDatabase.getInstance().getReference("courses/$courseId")
+
+        //update the course
+        databaseReference.setValue(course)
+            .addOnSuccessListener {
+                Log.d("CoursesViewModel", "Course updated successfully!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("CoursesViewModel", "Failed to update course", e)
+            }
+    }
+
+
 
 
 

@@ -61,12 +61,18 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         }
     }
 
+    fun updateCourseAtPosition(updatedCourse: Courses, position: Int) {
+        if (position in courses.indices) {
+            courses[position] = updatedCourse
+            notifyItemChanged(position)
+        }
+    }
+
     // add course
     fun addCourse(course: Courses) {
         courses.add(course)
         notifyItemInserted(courses.size - 1)
     }
-
 
 
     //get position of courses -> used for swipe gesture
@@ -79,4 +85,7 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         courses.add(position, course)
         notifyItemInserted(position)
     }
+
+
 }
+

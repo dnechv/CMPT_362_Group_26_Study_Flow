@@ -5,6 +5,7 @@ import java.util.Date
 
 //data model for courses
 data class Courses(
+    val id: String = "",
     val courseCode: String = "",
     val courseDays: String = "",
     val courseDescription: String = "",

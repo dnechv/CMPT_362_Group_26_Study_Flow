@@ -13,7 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.studyflow.R
 import com.example.studyflow.database_cloud.Courses
 
-class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.Adapter<CoursesAdapter.ViewHolder>() {
+class CoursesAdapter(
+
+    //list of courses
+    private var courses: MutableList<Courses>,
+
+    //on click listener for each course
+    private val onItemClickListener: (Courses) -> Unit
+
+) : RecyclerView.Adapter<CoursesAdapter.ViewHolder>() {
 
     //viewholder to hold views
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -21,9 +29,15 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         private val courseTerm: TextView = itemView.findViewById(R.id.course_term_item_tableview)
 
         //binding data to views
-        fun bind(course: Courses) {
+        fun bind(course: Courses, onItemClickListener: (Courses) -> Unit) {
             courseName.text = course.courseName //setting the course name
             courseTerm.text = course.courseTerm //setting the course term
+
+            //set on click listener for each course
+            itemView.setOnClickListener {
+                // Pass the course to the on click listener
+                onItemClickListener(course)
+            }
         }
     }
 
@@ -34,7 +48,6 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         return ViewHolder(view)
     }
 
-
     //methods
 
     //get the number of items in the list
@@ -43,7 +56,7 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
     //binding data to views
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val course = courses[position]
-        holder.bind(course)
+        holder.bind(course, onItemClickListener) // Pass the onItemClickListener to bind
     }
 
     //update the list of courses
@@ -74,7 +87,6 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         notifyItemInserted(courses.size - 1)
     }
 
-
     //get position of courses -> used for swipe gesture
     fun getCourseAtPosition(position: Int): Courses {
         return courses[position]
@@ -85,7 +97,5 @@ class CoursesAdapter(private var courses: MutableList<Courses>) : RecyclerView.A
         courses.add(position, course)
         notifyItemInserted(position)
     }
-
-
 }
 

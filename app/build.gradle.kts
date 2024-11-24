@@ -68,6 +68,9 @@ dependencies {
     implementation ("androidx.recyclerview:recyclerview:1.3.1")
     implementation ("androidx.appcompat:appcompat:1.6.1")
 
+    //material design
+    implementation ("com.google.android.material:material:1.9.0")
+
 
 
     implementation(libs.mapbox.android)

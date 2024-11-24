@@ -39,21 +39,23 @@ class CoursesViewModel : ViewModel() {
     }
 
 //update course
-    fun updateCourse(course: Courses) {
-        val courseId = course.id
+fun updateCourse(course: Courses) {
+    val courseId = course.id
 
-        //get reference to firebase
-        val databaseReference = FirebaseDatabase.getInstance().getReference("courses/$courseId")
+    if (courseId.isNotEmpty()) {
+        val firestoreReference = coursesRepository.getFirestoreDatabaseReference().collection("courses").document(courseId)
 
-        //update the course
-        databaseReference.setValue(course)
+        firestoreReference.set(course)
             .addOnSuccessListener {
                 Log.d("CoursesViewModel", "Course updated successfully!")
             }
             .addOnFailureListener { e ->
                 Log.e("CoursesViewModel", "Failed to update course", e)
             }
+    } else {
+        Log.e("CoursesViewModel", "Cannot update course: Missing course ID")
     }
+}
 
 
 

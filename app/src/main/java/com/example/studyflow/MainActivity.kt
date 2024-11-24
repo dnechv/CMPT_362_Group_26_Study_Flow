@@ -5,7 +5,7 @@ package com.example.studyflow
 // 4 tabs on the bottom
 
 //TODO - Login using firebase auth
-//TODO Offline mode <-> use local storage
+//TODO - FIREASE OFFLINE PERSISTENCE -> DONE
 
 
 //imports
@@ -25,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 //firebase imports
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 
 
 //bottom nav bar
@@ -55,8 +56,26 @@ class MainActivity : AppCompatActivity() {
         //initialize firebase
         FirebaseApp.initializeApp(this)
 
-        //firebase database variable
-       // val firebaseDataBase = FirebaseFirestore.getInstance()
+       //firebase offline persistence
+
+        //getting the firebase settings reference
+        val firebaseOfflineSettings = FirebaseFirestoreSettings.Builder()
+
+            //enable offline mode
+            .setPersistenceEnabled(true)
+
+            //set cache to unlimited
+            .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+
+            //build the settings
+            .build()
+
+
+        //getting the firebase database reference
+        val firebaseDatabase = FirebaseFirestore.getInstance()
+
+        //appying the settings for offline persistence
+        firebaseDatabase.firestoreSettings = firebaseOfflineSettings
 
 
 
@@ -102,12 +121,17 @@ class MainActivity : AppCompatActivity() {
 
         //create fragment transaction
         val transaction = supportFragmentManager.beginTransaction()
+
         // set fade in/out animations
         transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+
         //replace the fragment container with the fragment
         transaction.replace(R.id.fragment_container, fragment)
+
         //add the transaction to the back stack
         transaction.addToBackStack(null)
+
+
         //commit the transaction
         transaction.commit()
     }

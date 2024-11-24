@@ -72,6 +72,7 @@ dependencies {
 
 
     implementation(libs.mapbox.android)
+    implementation(libs.advanced.bottomsheet.material3)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

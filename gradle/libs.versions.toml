@@ -1,4 +1,5 @@
 [versions]
+advancedBottomsheetMaterial3 = "0.1.0"
 agp = "8.7.1"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
@@ -14,6 +15,7 @@ mapbox = "11.7.1"
 fragmentKtx = "1.8.5"
 
 [libraries]
+advanced-bottomsheet-material3 = { module = "io.morfly.compose:advanced-bottomsheet-material3", version.ref = "advancedBottomsheetMaterial3" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

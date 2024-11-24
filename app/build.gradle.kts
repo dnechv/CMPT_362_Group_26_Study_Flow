@@ -57,8 +57,6 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
 
-    implementation ("com.mapbox.maps:android:11.7.1")
-
 
 
 
@@ -71,9 +69,6 @@ dependencies {
     //material design
     implementation ("com.google.android.material:material:1.9.0")
 
-
-
-    implementation(libs.mapbox.android)
 
 
     implementation(libs.mapbox.android)

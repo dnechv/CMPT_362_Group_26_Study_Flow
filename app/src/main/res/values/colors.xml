@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Main Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Updated Colors from the new palette -->
+
+    <!-- Soft Blue  -->
+    <color name="primaryColor">#5C6BC0</color>
+
+    <!-- Dark Navy  -->
+    <color name="accentColor">#05386B</color>
+
+    <!-- Light Gray  -->
+    <color name="backgroundColor">#F5F5F5</color>
+
+    <!-- Card Background  -->
+    <color name="cardBackground">#FFFFFF</color>
+
+    <!-- Dark Gray (Primary Text Color) -->
+    <color name="textPrimaryColor">#212121</color>
+
+    <!-- Mid Gray (Secondary Text Color) -->
+    <color name="textSecondaryColor">#757575</color>
+
+    <!-- Action Button Color -->
+    <color name="ActionButton">#A5D6A7</color>
+
+    <!-- Play Button (Custom Special Use) -->
+    <color name="playButton">#FF0000</color>
+
+    <!-- Bottom Navigation Background -->
+    <color name="navigationBarColor">#F0F0F0</color>
 </resources>

@@ -80,6 +80,7 @@ class LoginActivity : AppCompatActivity() {
 
         tvSignup.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
+            finish()
         }
     }
 

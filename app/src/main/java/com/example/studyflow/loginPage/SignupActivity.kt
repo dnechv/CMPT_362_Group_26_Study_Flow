@@ -59,6 +59,7 @@ class SignupActivity : AppCompatActivity() {
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TTT", "createUserWithEmail:success")
+                            startActivity(Intent(this, LoginActivity::class.java))
                             finish()
                             //val user = auth.currentUser
 

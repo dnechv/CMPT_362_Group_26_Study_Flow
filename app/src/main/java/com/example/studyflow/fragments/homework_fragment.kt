@@ -66,30 +66,32 @@ class homework_fragment : Fragment() {
             homeworkAdapter,
 
             //callback for delete
-            onDeleteCallback = { deletedCourse, position ->
+            onDeleteCallback = { deletedHW, position ->
 
                 // Logic for handling delete
 
-                //record deleted course
-                lastDeletedHW = deletedCourse
+                //record deleted hw
+                lastDeletedHW = deletedHW
 
-                //record position of the delted course
+                //record position of the deleted hw
                 lastDeletedHWPosition = position
 
 
                 //update the adapter
-                homeworkAdapter.deleteHW(position)
+                //homeworkAdapter.deleteHW(position)
+
+                homeworkViewModel.deleteHomework(deletedHW)
 
 
-                Log.d("CoursesFragment", "Deleted course: $deletedCourse at position: $position")
+                Log.d("hwFragment", "Deleted hw: $deletedHW at position: $position")
             },
-            onEditCallback = { courseToEdit, position ->
+            onEditCallback = { hwToEdit, position ->
                 // Logic for handling edit
 
-                showEditHWDialog(courseToEdit, position)
+                showEditHWDialog(hwToEdit, position)
 
-                //showEditCourseDialog(courseToEdit, position) // Show edit dialog
-                Log.d("CoursesFragment", "Editing course: $courseToEdit at position: $position")
+                //showEditCourseDialog(hwToEdit, position) // Show edit dialog
+                Log.d("CoursesFragment", "Editing course: $hwToEdit at position: $position")
             }
         )
 
@@ -106,7 +108,6 @@ class homework_fragment : Fragment() {
         var coursesNameList = mutableListOf<String>()
         CR.getCourses { courses ->
             aa = courses
-            //Log.d("COURSENAMEADD" , aa[1].courseName)
             for (course in aa ) {
                 Log.d("COURSENAMEADD" , course.courseName)
                 coursesNameList.add(course.courseName)
@@ -204,10 +205,10 @@ class homework_fragment : Fragment() {
 
         // Create and show the dialog
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Edit Course")
+            .setTitle("Edit Homework")
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
-                // Update the course details
+                // Update the hw details
                 val updatedHW = hw.copy(
                     homeworkName = homeworkNameEditText.text.toString(),
                     homeworkDueTime = homeworkTimeEditText.text.toString(),

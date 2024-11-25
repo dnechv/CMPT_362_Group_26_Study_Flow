@@ -7,6 +7,7 @@ import java.util.Date
 //data model for homework
 
 data class Homework(
+    val id:String = "",
     val homeworkName: String = "",
     val homeworkDescription: String = "",
     val courseName: String = "",

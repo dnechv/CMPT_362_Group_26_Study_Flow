@@ -14,8 +14,11 @@ class HomeworkRepository {
 
     //adds homework to the database
     fun addHomework(homework: Homework) {
-        firebaseDataBase.collection("homework").document()
-            .set(homework)
+
+        val docRef = firebaseDataBase.collection("homework").document()
+        val hwID = homework.copy(id = docRef.id)
+        docRef.set(hwID)
+
             .addOnSuccessListener {
                 Log.d("HomeworkRepository", "Homework added successfully")
             }
@@ -23,6 +26,15 @@ class HomeworkRepository {
                 Log.d("HomeworkRepository", "Failed to add homework", exception)
 
             }
+//        firebaseDataBase.collection("homework").document()
+//            .set(homework)
+//            .addOnSuccessListener {
+//                Log.d("HomeworkRepository", "Homework added successfully")
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.d("HomeworkRepository", "Failed to add homework", exception)
+//
+//            }
     }
 
     //function to get homework from the database
@@ -39,12 +51,11 @@ class HomeworkRepository {
     }
 
     //delete homework
-    fun deleteHomework(homework: Homework, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firebaseDataBase.collection("homework").document(homework.homeworkName)
+    fun deleteHomework(homework: Homework) {
+        firebaseDataBase.collection("homework").document(homework.id)
             .delete()
             .addOnSuccessListener {
                 Log.d("HomeworkRepository", "Homework deleted successfully")
-                onSuccess()
         }
     }
 

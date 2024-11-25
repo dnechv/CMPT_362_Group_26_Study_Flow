@@ -43,8 +43,8 @@ class HomeworkViewModel:ViewModel() {
     }
 
     //function to delete homework from the database
-    fun deleteHomework(homework: Homework, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        homeworkRepository.deleteHomework(homework, onSuccess, onFailure)
+    fun deleteHomework(homework: Homework) {
+        homeworkRepository.deleteHomework(homework)
     }
 
     //update course

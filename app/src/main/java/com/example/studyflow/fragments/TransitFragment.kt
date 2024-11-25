@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
-import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.composables.core.HorizontalSeparator
@@ -303,12 +301,6 @@ class TransitFragment : Fragment() {
     companion object {
         enum class SheetValue { Collapsed, PartiallyExpanded, Expanded }
         data class Stop(val id: Int, val code: String, val name: String)
-        data class Route(
-            val id: Int,
-            val shortName: String,
-            val longName: String
-        )
-
         data class Departure(
             val id: Int,
             val route: String,

@@ -14,6 +14,10 @@ constraintlayout = "2.2.0"
 firebaseFirestoreKtx = "25.1.1"
 mapbox = "11.7.1"
 fragmentKtx = "1.8.5"
+volley = "1.2.1"
+uiToolingPreviewAndroid = "1.7.5"
+core = "1.19.1"
+kotlinxDatetime = "0.6.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
@@ -31,6 +35,10 @@ firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-fires
 mapbox-android = { module = "com.mapbox.maps:android", version.ref = "mapbox" }
 mapbox-maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapbox" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
+androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
+core = { group = "com.composables", name = "core", version.ref = "core" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

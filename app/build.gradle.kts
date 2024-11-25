@@ -85,6 +85,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.firestore.ktx) //firestore for firebase
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.volley)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.core)
+    implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

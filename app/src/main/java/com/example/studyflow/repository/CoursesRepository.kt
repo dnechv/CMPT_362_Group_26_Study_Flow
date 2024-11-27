@@ -90,6 +90,34 @@ class CoursesRepository {
     }
 
 
+    //update course
+    fun updateCourse(course: Courses) {
+        if (course.id.isNotEmpty()) {
+
+
+            //get the course by id
+            firebaseDataBase.collection("courses").document(course.id)
+
+                //update the course
+                .set(course)
+                .addOnSuccessListener {
+
+
+                    Log.d("CoursesRepository", "Course updated successfully: ${course.id}")
+                }
+                .addOnFailureListener { exception ->
+
+
+                    Log.e("CoursesRepository", "failed to update", exception)
+                }
+        } else {
+
+
+            Log.e("CoursesRepository", "no id. cant update.")
+        }
+    }
+
+
     //delete course
     fun deleteCourse(course: Courses) {
 

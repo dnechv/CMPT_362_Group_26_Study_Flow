@@ -61,6 +61,10 @@ dependencies {
     implementation ("com.mapbox.maps:android:11.7.1")
 
 
+    //chart
+    implementation ("com.github.AnyChart:AnyChart-Android:1.1.5")
+
+
 
 
 
@@ -71,6 +75,8 @@ dependencies {
 
     //material design
     implementation ("com.google.android.material:material:1.9.0")
+
+    implementation ("io.github.wojciechosak:calendar:1.0.1")
 
 
 

@@ -3,6 +3,7 @@ package com.example.studyflow.fragments
 // imports
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,10 +30,13 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.studyflow.additionalClasses.ShakeDetector
 import com.google.android.material.snackbar.Snackbar
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class courses_fragment : Fragment() {
 
@@ -77,11 +81,28 @@ class courses_fragment : Fragment() {
 
         // Listen for date changes
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            // Handle the selected date (month is 0-indexed, add 1 for the correct month)
+            // Format the selected date (e.g., 1/12/2024)
             val selectedDate = "$dayOfMonth/${month + 1}/$year"
-            Log.d("CalendarView", "Selected Date: $selectedDate")
 
-            //TODO - Additional stuff
+            // Get the day of the week (e.g., Monday, Tuesday)
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, dayOfMonth)
+            val dayOfWeek = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
+
+            //get courses matching the selected date
+            val coursesToday = coursesAdapter.getCourses().filter { course ->
+                isCourseOnDate(course, selectedDate, dayOfWeek)
+            }
+
+            // Show a popup with the results
+            if (coursesToday.isNotEmpty()) {
+
+                showPopup("Classes Today", coursesToday)
+
+            } else {
+
+                showPopup("No Classes Today", emptyList())
+            }
         }
 
 
@@ -179,7 +200,7 @@ class courses_fragment : Fragment() {
                 coursesViewModel.deleteCourse(deletedCourse)
 
 
-                Log.d("CoursesFragment", "Deleted course: $deletedCourse at position: $position")
+                Log.d("courses fragment ", "deleted course: $deletedCourse at position: $position")
             },
 
             onEditCallback = { courseToEdit, position ->
@@ -226,6 +247,94 @@ class courses_fragment : Fragment() {
         return view
     }
 
+    //show popup function
+    private fun isCourseOnDate(course: Courses, selectedDate: String, selectedDayOfWeek: String?): Boolean {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val selectedDateParsed = sdf.parse(selectedDate)
+        val courseStartDate = course.courseStartDate?.let { sdf.parse(it) }
+        val courseEndDate = course.courseEndDate?.let { sdf.parse(it) }
+
+        if (selectedDateParsed != null && courseStartDate != null && courseEndDate != null) {
+
+
+            if (!selectedDateParsed.before(courseStartDate) && !selectedDateParsed.after(courseEndDate)) {
+
+
+                return selectedDayOfWeek != null && course.courseDays.contains(selectedDayOfWeek)
+            }
+        }
+        return false
+    }
+
+
+    //pop up for courses
+    private fun showPopup(title: String, coursesToday: List<Courses>) {
+
+
+        // inflate xml
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialogue_courses_for_date, null)
+
+        // get views from xml
+        val dialogTitle = dialogView.findViewById<TextView>(R.id.dialog_date_title)
+        val coursesContainer = dialogView.findViewById<LinearLayout>(R.id.dialog_courses_list_container)
+        val noClassesMessage = dialogView.findViewById<TextView>(R.id.dialog_no_classes_message)
+
+        // set title
+        dialogTitle.text = title
+
+        // clear old views
+        coursesContainer.removeAllViews()
+
+        // check for courses
+        if (coursesToday.isNotEmpty()) {
+
+
+            // hide no classes message if courses
+            noClassesMessage.visibility = View.GONE
+
+            // go through courses
+            for (course in coursesToday) {
+
+                //create text view for each
+                val courseView = TextView(requireContext())
+
+                //set text size, color, padding
+                courseView.text = buildCourseDetails(course)
+                courseView.textSize = 14f
+                courseView.setTextColor(resources.getColor(R.color.black, null))
+                courseView.setPadding(8, 8, 8, 8)
+
+                // Add the course view to the container
+                coursesContainer.addView(courseView)
+            }
+        } else {
+
+            //if no courses show message
+            noClassesMessage.visibility = View.VISIBLE
+        }
+
+        //create dialogue
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        // set background
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+
+        //display dialogue
+        dialog.show()
+    }
+
+    // Helper function to build course details
+    private fun buildCourseDetails(course: Courses): String {
+        return """
+        ${course.courseName} (${course.courseTerm})
+        Time: ${course.courseStartTime} - ${course.courseEndTime}
+        Location: ${course.courseLocation}
+    """.trimIndent()
+    }
+
 
 
     private fun deleteCourse(poisiton: Int){
@@ -251,7 +360,6 @@ class courses_fragment : Fragment() {
 
     //show courses dialog add
     private fun showAddCourseDialog() {
-        // Finding the XML
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.adding_course, null)
 
         // Initialize fields in the dialog
@@ -259,24 +367,25 @@ class courses_fragment : Fragment() {
         val courseTermEditText = dialogView.findViewById<EditText>(R.id.edit_course_term)
         val startDateButton = dialogView.findViewById<Button>(R.id.start_date_button)
         val endDateButton = dialogView.findViewById<Button>(R.id.end_date_button)
+        val startTimeButton = dialogView.findViewById<Button>(R.id.start_time_button) // Start Time
+        val endTimeButton = dialogView.findViewById<Button>(R.id.end_time_button)     // End Time
 
-
-        //checkboxes for recuring days
         val mondayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_monday)
         val tuesdayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_tuesday)
         val wednesdayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_wednesday)
         val thursdayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_thursday)
         val fridayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_friday)
 
-        // Variables to store selected dates
         var startDate: String? = null
         var endDate: String? = null
+        var startTime: String? = null
+        var endTime: String? = null
 
         // Start date button listener
         startDateButton.setOnClickListener {
             showDatePickerDialog { selectedDate ->
                 startDate = selectedDate
-                startDateButton.text = selectedDate // Update button text
+                startDateButton.text = selectedDate
             }
         }
 
@@ -284,53 +393,69 @@ class courses_fragment : Fragment() {
         endDateButton.setOnClickListener {
             showDatePickerDialog { selectedDate ->
                 endDate = selectedDate
-                endDateButton.text = selectedDate // Update button text
+                endDateButton.text = selectedDate
             }
         }
 
-        //inflating the custom add course title
-        val add_course_title_dialogue = LayoutInflater.from(requireContext()).inflate(R.layout.add_course_title_dialogue, null)
+        // Start time button listener
+        startTimeButton.setOnClickListener {
+            showTimePickerDialog { selectedTime ->
+                startTime = selectedTime
+                startTimeButton.text = selectedTime
+            }
+        }
 
-        // Create and show dialog
+        // End time button listener
+        endTimeButton.setOnClickListener {
+            showTimePickerDialog { selectedTime ->
+                endTime = selectedTime
+                endTimeButton.text = selectedTime
+            }
+        }
+
+        val addCourseTitleDialog = LayoutInflater.from(requireContext()).inflate(R.layout.add_course_title_dialogue, null)
+
         val dialog = AlertDialog.Builder(requireContext())
-            .setCustomTitle(add_course_title_dialogue)
+            .setCustomTitle(addCourseTitleDialog)
             .setView(dialogView)
-            .setTitle("Add Course")
             .setPositiveButton("Add", null)
             .setNegativeButton("Cancel", null)
             .show()
 
-        // Positive button listener
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val courseName = courseNameEditText.text.toString()
             val courseTerm = courseTermEditText.text.toString()
-
-            //get selected repeated days
             val selectedDays = mutableListOf<String>()
+
             if (mondayCheckBox.isChecked) selectedDays.add("Monday")
             if (tuesdayCheckBox.isChecked) selectedDays.add("Tuesday")
             if (wednesdayCheckBox.isChecked) selectedDays.add("Wednesday")
             if (thursdayCheckBox.isChecked) selectedDays.add("Thursday")
             if (fridayCheckBox.isChecked) selectedDays.add("Friday")
 
-            // Check if fields are filled
-            if (courseName.isNotEmpty() && courseTerm.isNotEmpty() && startDate != null && endDate != null) {
+            if (courseName.isNotEmpty() && courseTerm.isNotEmpty() && startDate != null && endDate != null && startTime != null && endTime != null) {
                 val newCourse = Courses(
                     courseName = courseName,
                     courseTerm = courseTerm,
                     courseStartDate = startDate,
                     courseEndDate = endDate,
+                    courseStartTime = startTime!!,
+                    courseEndTime = endTime!!,
                     courseDays = selectedDays
                 )
-                coursesViewModel.addCourse(newCourse) // Add the course to ViewModel
+
+                // Add the course to the database
+                coursesViewModel.addCourse(newCourse)
                 dialog.dismiss()
             } else {
+
+
                 if (courseName.isEmpty()) courseNameEditText.error = "Field required"
                 if (courseTerm.isEmpty()) courseTermEditText.error = "Field required"
                 if (startDate == null) startDateButton.error = "Select start date"
-                if (endDate == null) {
-                    endDateButton.error = "Select end date"
-                }
+                if (endDate == null) endDateButton.error = "Select end date"
+                if (startTime == null) startTimeButton.error = "Select start time"
+                if (endTime == null) endTimeButton.error = "Select end time"
             }
         }
     }
@@ -343,7 +468,8 @@ class courses_fragment : Fragment() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-            // Format the selected date as a string (e.g., "23/11/2024")
+
+            //format the  date
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
             onDateSelected(formattedDate)
         }, year, month, day).show()
@@ -361,7 +487,7 @@ class courses_fragment : Fragment() {
         val courseEndDateTextView = dialogView.findViewById<TextView>(R.id.dialog_end_date)
         val courseDaysTextView = dialogView.findViewById<TextView>(R.id.dialog_course_days)
 
-        // Populate fields
+        //fields add data
         courseNameTextView.text = course.courseName
         courseTermTextView.text = course.courseTerm
         courseStartDateTextView.text = course.courseStartDate ?: "N/A"
@@ -370,12 +496,14 @@ class courses_fragment : Fragment() {
 
         // Show the dialog
 
-        // Create and customize the dialog
+        //create dialogue
         val dialog = AlertDialog.Builder(requireContext())
+
+            //set attitubutes of the dialogue
             .setView(dialogView)
             .create()
 
-        // Set the background of the dialog to transparent
+        //background
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         // Show the dialog
@@ -385,76 +513,142 @@ class courses_fragment : Fragment() {
     }
 
 
-    //set dialogue background to transparent
+   //time picker for time courses
+   private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
+       val calendar = Calendar.getInstance()
+       val hour = calendar.get(Calendar.HOUR_OF_DAY)
+       val minute = calendar.get(Calendar.MINUTE)
+
+       TimePickerDialog(requireContext(), { _, selectedHour, selectedMinute ->
+           val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+           onTimeSelected(formattedTime)
+       }, hour, minute, true).show()
+   }
 
 
 
 
 
-    //shows edit courses dialoge -> allows editing firebase data
     private fun showEditCourseDialog(course: Courses, position: Int) {
-        // Inflate the custom dialog layout
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.edit_course_dialog, null)
 
-        // Initialize fields
-        val courseNameEditText = dialogView.findViewById<EditText>(R.id.edit_course_name)
-        val courseTermEditText = dialogView.findViewById<EditText>(R.id.edit_course_term)
-        val startDateButton = dialogView.findViewById<Button>(R.id.start_date_button)
-        val endDateButton = dialogView.findViewById<Button>(R.id.end_date_button)
-        val mondayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_monday)
-        val tuesdayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_tuesday)
-        val wednesdayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_wednesday)
-        val thursdayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_thursday)
-        val fridayCheckBox = dialogView.findViewById<CheckBox>(R.id.checkbox_friday)
 
-        // Populate fields with existing data
+        //inflate the dialog
+        val dialogViewEditCourses = LayoutInflater.from(requireContext()).inflate(R.layout.edit_course_dialog, null)
+
+        //get views
+        val courseNameEditText = dialogViewEditCourses.findViewById<EditText>(R.id.edit_course_name)
+        val courseTermEditText = dialogViewEditCourses.findViewById<EditText>(R.id.edit_course_term)
+        val startDateButton = dialogViewEditCourses.findViewById<Button>(R.id.start_date_button)
+        val endDateButton = dialogViewEditCourses.findViewById<Button>(R.id.end_date_button)
+        val startTimeButton = dialogViewEditCourses.findViewById<Button>(R.id.start_time_button)
+        val endTimeButton = dialogViewEditCourses.findViewById<Button>(R.id.end_time_button)
+        val mondayCheckBox = dialogViewEditCourses.findViewById<CheckBox>(R.id.checkbox_monday)
+        val tuesdayCheckBox = dialogViewEditCourses.findViewById<CheckBox>(R.id.checkbox_tuesday)
+        val wednesdayCheckBox = dialogViewEditCourses.findViewById<CheckBox>(R.id.checkbox_wednesday)
+        val thursdayCheckBox = dialogViewEditCourses.findViewById<CheckBox>(R.id.checkbox_thursday)
+        val fridayCheckBox = dialogViewEditCourses.findViewById<CheckBox>(R.id.checkbox_friday)
+
+        // Add existing data
         courseNameEditText.setText(course.courseName)
         courseTermEditText.setText(course.courseTerm)
         startDateButton.text = course.courseStartDate ?: "Select Start Date"
         endDateButton.text = course.courseEndDate ?: "Select End Date"
+        startTimeButton.text = course.courseStartTime ?: "Select Start Time"
+        endTimeButton.text = course.courseEndTime ?: "Select End Time"
 
-        // Pre-check recurring days
+        // Recurring days
         course.courseDays.forEach { day ->
+
+
             when (day) {
-                "Mon" -> mondayCheckBox.isChecked = true
-                "Tue" -> tuesdayCheckBox.isChecked = true
-                "Wed" -> wednesdayCheckBox.isChecked = true
-                "Thu" -> thursdayCheckBox.isChecked = true
-                "Fri" -> fridayCheckBox.isChecked = true
+
+
+                "Monday" -> mondayCheckBox.isChecked = true
+                "Tuesday" -> tuesdayCheckBox.isChecked = true
+                "Wednesday" -> wednesdayCheckBox.isChecked = true
+                "Thursday" -> thursdayCheckBox.isChecked = true
+                "Friday" -> fridayCheckBox.isChecked = true
+            }
+        }
+
+
+        //date and time listeners
+
+        startDateButton.setOnClickListener {
+            showDatePickerDialog { selectedDate ->
+                startDateButton.text = selectedDate
+            }
+        }
+
+        endDateButton.setOnClickListener {
+            showDatePickerDialog { selectedDate ->
+                endDateButton.text = selectedDate
+            }
+        }
+
+        startTimeButton.setOnClickListener {
+            showTimePickerDialog { selectedTime ->
+                startTimeButton.text = selectedTime
+            }
+        }
+
+        endTimeButton.setOnClickListener {
+            showTimePickerDialog { selectedTime ->
+                endTimeButton.text = selectedTime
             }
         }
 
         // Create and show the dialog
+
         val dialog = AlertDialog.Builder(requireContext())
+
+            //set attributes
             .setTitle("Edit Course")
-            .setView(dialogView)
+            .setView(dialogViewEditCourses)
             .setPositiveButton("Save") { _, _ ->
-                // Collect updated data
+
+
+                //get data
                 val updatedCourseName = courseNameEditText.text.toString()
                 val updatedCourseTerm = courseTermEditText.text.toString()
                 val updatedStartDate = startDateButton.text.toString()
                 val updatedEndDate = endDateButton.text.toString()
+                val updatedStartTime = startTimeButton.text.toString()
+                val updatedEndTime = endTimeButton.text.toString()
                 val updatedDays = mutableListOf<String>()
-                if (mondayCheckBox.isChecked) updatedDays.add("Mon")
-                if (tuesdayCheckBox.isChecked) updatedDays.add("Tue")
-                if (wednesdayCheckBox.isChecked) updatedDays.add("Wed")
-                if (thursdayCheckBox.isChecked) updatedDays.add("Thu")
-                if (fridayCheckBox.isChecked) updatedDays.add("Fri")
 
-                // Update the course object
+                //update days
+                if (mondayCheckBox.isChecked) updatedDays.add("Monday")
+                if (tuesdayCheckBox.isChecked) updatedDays.add("Tuesday")
+                if (wednesdayCheckBox.isChecked) updatedDays.add("Wednesday")
+                if (thursdayCheckBox.isChecked) updatedDays.add("Thursday")
+                if (fridayCheckBox.isChecked) updatedDays.add("Friday")
+
+                //update data
                 val updatedCourse = course.copy(
                     courseName = updatedCourseName,
                     courseTerm = updatedCourseTerm,
                     courseStartDate = updatedStartDate,
                     courseEndDate = updatedEndDate,
+                    courseStartTime = updatedStartTime,
+                    courseEndTime = updatedEndTime,
                     courseDays = updatedDays
                 )
 
-                // Notify adapter and update Firestore
+
+
+                //update firebase
                 coursesAdapter.updateCourseAtPosition(updatedCourse, position)
+
+                //update the viewmodel
                 coursesViewModel.updateCourse(updatedCourse)
             }
+
+
+
             .setNegativeButton("Cancel", null)
+
+
             .show()
     }
 

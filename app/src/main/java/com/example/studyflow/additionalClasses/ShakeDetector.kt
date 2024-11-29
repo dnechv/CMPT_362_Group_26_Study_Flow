@@ -23,7 +23,11 @@ class ShakeDetector(private val onShake: () -> Unit) : SensorEventListener {
 
     //overriding onsensors changed
     override fun onSensorChanged(event: SensorEvent?) {
+
+
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+
+            //get accelomaeter values
             val x = event.values[0]
             val y = event.values[1]
             val z = event.values[2]
@@ -44,9 +48,10 @@ class ShakeDetector(private val onShake: () -> Unit) : SensorEventListener {
 
                     lastUpdate = currentTime //update the time
 
-                    Log.d("ShakeDetector", "Shake detected on Pixel 7!")
+                    Log.d("shaking", "shaking detected")
 
 
+                    //call the on shake function
                     onShake()
 
 

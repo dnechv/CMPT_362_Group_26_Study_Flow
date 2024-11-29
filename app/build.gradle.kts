@@ -57,8 +57,13 @@ dependencies {
 
     //firebase services that we want to use - analytics as example
     implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(libs.firebase.auth.ktx)
     implementation("com.google.firebase:firebase-storage-ktx")
+    implementation ("com.google.firebase:firebase-auth:23.1.0")
+
+
+    //chart
+    implementation ("com.github.AnyChart:AnyChart-Android:1.1.5")
 
 
 
@@ -71,6 +76,8 @@ dependencies {
 
     //material design
     implementation ("com.google.android.material:material:1.9.0")
+
+    implementation ("io.github.wojciechosak:calendar:1.0.1")
 
 
 
@@ -89,6 +96,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.core)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -9,6 +9,8 @@ import com.example.studyflow.database_cloud.Homework
 //import live data
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.studyflow.database_cloud.Courses
+import com.google.firebase.database.FirebaseDatabase
 
 //manages the flow of data between repository and UI for homework
 
@@ -43,6 +45,23 @@ class HomeworkViewModel:ViewModel() {
     //function to delete homework from the database
     fun deleteHomework(homework: Homework, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         homeworkRepository.deleteHomework(homework, onSuccess, onFailure)
+    }
+
+    //update course
+    fun updateHW(hw: Homework) {
+        val HWId = hw.courseId
+
+        //get reference to firebase
+        val databaseReference = FirebaseDatabase.getInstance().getReference("homework/$HWId")
+
+        //update the course
+        databaseReference.setValue(hw)
+            .addOnSuccessListener {
+                Log.d("CoursesViewModel", "Course updated successfully!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("CoursesViewModel", "Failed to update course", e)
+            }
     }
 
 

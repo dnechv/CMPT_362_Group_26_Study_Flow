@@ -158,75 +158,74 @@ class TransitFragment : Fragment() {
                         Spacer(modifier = Modifier.weight(1.0f))
                     }
                 }
-            },
-            content = {
-                MapboxMap(
-                    Modifier.fillMaxSize(),
-                    mapState = mapState,
-                    mapViewportState = mapViewportState,
-                    onMapClickListener = {
-                        requestError = false
-                        coroutineScope.launch {
-                            stop = mapState.queryStopAt(it)
-                            departures = emptyList()
-                            if (stop != null) {
-                                mapViewportState.flyTo(
-                                    cameraOptions {
-                                        if (mapViewportState.cameraState!!.zoom < 18.0) zoom(18.0)
-                                        center(it)
-                                    }
-                                )
-                                loading = true
-                                val request = JsonObjectRequest(
-                                    Request.Method.GET,
-                                    "https://transit.cqng.ca/api/info/${stop!!.id}/limit/10",
-                                    null,
-                                    { response ->
-                                        requestError = false
-                                        loading = false
-                                        val departuresArray = response.getJSONArray("departures")
-                                        departures = (0 until departuresArray.length()).map {
-                                            val departure = departuresArray.getJSONObject(it)
-                                            Departure(
-                                                id = departure.getInt("id"),
-                                                route = departure.getString("route"),
-                                                destination = departure.getString("destination"),
-                                                time = Instant.fromEpochMilliseconds(
-                                                    departure.getLong(
-                                                        "time"
-                                                    )
+            }
+        ) {
+            MapboxMap(
+                Modifier.fillMaxSize(),
+                mapState = mapState,
+                mapViewportState = mapViewportState,
+                onMapClickListener = {
+                    requestError = false
+                    coroutineScope.launch {
+                        stop = mapState.queryStopAt(it)
+                        departures = emptyList()
+                        if (stop != null) {
+                            mapViewportState.flyTo(
+                                cameraOptions {
+                                    if (mapViewportState.cameraState!!.zoom < 18.0) zoom(18.0)
+                                    center(it)
+                                }
+                            )
+                            loading = true
+                            val request = JsonObjectRequest(
+                                Request.Method.GET,
+                                "https://transit.cqng.ca/api/info/${stop!!.id}/limit/10",
+                                null,
+                                { response ->
+                                    requestError = false
+                                    loading = false
+                                    val departuresArray = response.getJSONArray("departures")
+                                    departures = (0 until departuresArray.length()).map {
+                                        val departure = departuresArray.getJSONObject(it)
+                                        Departure(
+                                            id = departure.getInt("id"),
+                                            route = departure.getString("route"),
+                                            destination = departure.getString("destination"),
+                                            time = Instant.fromEpochMilliseconds(
+                                                departure.getLong(
+                                                    "time"
                                                 )
                                             )
-                                        }
+                                        )
+                                    }
 
-                                    },
-                                    {
-                                        requestError = true
-                                        loading = false
-                                    })
-                                requestQueue.add(request)
-                            }
+                                },
+                                {
+                                    requestError = true
+                                    loading = false
+                                })
+                            requestQueue.add(request)
                         }
-                        false
-                    },
-                    scaleBar = {},
-                    style = {
-                        MapStyle(style = "mapbox://styles/cyrusqng/cm38qzmej009t01q7gago6aoe")
                     }
-                ) {
-                    MapEffect() { mapView ->
-                        mapView.mapboxMap.setBounds(
-                            CameraBoundsOptions.Builder().bounds(
-                                CoordinateBounds( // TransLink does not operate beyond these bounds
-                                    Point.fromLngLat(-123.494, 48.95),
-                                    Point.fromLngLat(-122.072, 49.49)
-                                )
-                            ).build()
-                        )
-                    }
+                    false
+                },
+                scaleBar = {},
+                style = {
+                    MapStyle(style = stringResource(R.string.transit_mapbox_style_uri))
+                }
+            ) {
+                MapEffect { mapView ->
+                    mapView.mapboxMap.setBounds(
+                        CameraBoundsOptions.Builder().bounds(
+                            CoordinateBounds( // TransLink does not operate beyond these bounds
+                                Point.fromLngLat(-123.494, 48.95),
+                                Point.fromLngLat(-122.072, 49.49)
+                            )
+                        ).build()
+                    )
                 }
             }
-        )
+        }
     }
 
     @Composable

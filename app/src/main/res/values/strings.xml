@@ -8,5 +8,6 @@
     <string name="transit_departures_loading">Loading…</string>
     <string name="transit_departure_minutes">%1$d min</string>
     <string name="transit_departure_now">Now</string>
+    <string name="transit_mapbox_style_uri" translatable="false">mapbox://styles/cyrusqng/cm38qzmej009t01q7gago6aoe</string>
     <string name="transit_stop_subtitle">Stop code: %1$s</string>
 </resources>

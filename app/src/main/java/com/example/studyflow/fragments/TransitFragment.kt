@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
@@ -150,7 +151,10 @@ class TransitFragment : Fragment() {
                             }
                         }
                     } else {
-                        Text("Tap on a transit stop on the map", Modifier.padding(20.dp, 8.dp))
+                        Text(
+                            stringResource(R.string.transit_action_hint),
+                            Modifier.padding(20.dp, 8.dp)
+                        )
                         Spacer(modifier = Modifier.weight(1.0f))
                     }
                 }
@@ -230,7 +234,10 @@ class TransitFragment : Fragment() {
         Column(Modifier.padding(20.dp, 4.dp)) {
             Text(stop.name, style = MaterialTheme.typography.titleLarge)
             if (stop.code != "") {
-                Text("Stop code: ${stop.code}", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    stringResource(R.string.transit_stop_subtitle, stop.code),
+                    style = MaterialTheme.typography.titleSmall
+                )
             }
         }
     }
@@ -238,7 +245,7 @@ class TransitFragment : Fragment() {
     @Composable
     fun Loading() {
         Text(
-            "Loading...",
+            stringResource(R.string.transit_departures_loading),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -249,7 +256,7 @@ class TransitFragment : Fragment() {
     @Composable
     fun NoDepartures() {
         Text(
-            "No upcoming departures.",
+            stringResource(R.string.transit_departures_empty),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -260,7 +267,7 @@ class TransitFragment : Fragment() {
     @Composable
     fun RequestError() {
         Text(
-            "Departures cannot be loaded at this time.",
+            stringResource(R.string.transit_departures_error),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -287,9 +294,9 @@ class TransitFragment : Fragment() {
                 }
             })
         } else if (timeTillDeparture.minutes == 0) {
-            "Now"
+            stringResource(R.string.transit_departure_now)
         } else {
-            "${timeTillDeparture.minutes} min"
+            stringResource(R.string.transit_departure_minutes, timeTillDeparture.minutes)
         }
         Row(
             Modifier

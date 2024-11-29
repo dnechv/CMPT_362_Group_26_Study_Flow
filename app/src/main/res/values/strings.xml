@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">StudyFlow</string>
     <string name="settings">Settings</string>
+    <!-- Transit -->
+    <string name="transit_action_hint">Tap on a transit stop on the map</string>
+    <string name="transit_departures_empty">No upcoming departures.</string>
+    <string name="transit_departures_error">Departures cannot be loaded at this time.</string>
+    <string name="transit_departures_loading">Loading…</string>
+    <string name="transit_departure_minutes">%1$d min</string>
+    <string name="transit_departure_now">Now</string>
+    <string name="transit_stop_subtitle">Stop code: %1$s</string>
 </resources>

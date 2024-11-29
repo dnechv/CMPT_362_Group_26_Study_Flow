@@ -1,6 +1,7 @@
 package com.example.studyflow.fragments
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,8 +59,12 @@ import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
 import kotlinx.datetime.periodUntil
+import kotlinx.datetime.toLocalDateTime
 
 // This fragment allows the user to see transit options
 @OptIn(ExperimentalFoundationApi::class)
@@ -267,6 +272,25 @@ class TransitFragment : Fragment() {
     fun DepartureRow(departure: Departure) {
         val zone = TimeZone.of("America/Vancouver")
         val timeTillDeparture = Clock.System.now().periodUntil(departure.time, zone)
+        val estimatedDepartureText = if (timeTillDeparture.hours > 0) {
+            departure.time.toLocalDateTime(zone).format(LocalDateTime.Format {
+                if (DateFormat.is24HourFormat(context)) {
+                    hour()
+                    char(':')
+                    minute()
+                } else {
+                    amPmHour()
+                    char(':')
+                    minute()
+                    char(' ')
+                    amPmMarker("AM", "PM")
+                }
+            })
+        } else if (timeTillDeparture.minutes == 0) {
+            "Now"
+        } else {
+            "${timeTillDeparture.minutes} min"
+        }
         Row(
             Modifier
                 .fillMaxWidth()
@@ -277,10 +301,7 @@ class TransitFragment : Fragment() {
                 Text(departure.destination)
             }
             Spacer(modifier = Modifier.weight(1.0f))
-            Text(
-                if (timeTillDeparture.minutes == 0) "Now" else "${timeTillDeparture.minutes} min",
-                Modifier.wrapContentHeight()
-            )
+            Text(estimatedDepartureText, Modifier.wrapContentHeight())
         }
         HorizontalSeparator(color = Color(0xFF9E9E9E))
     }

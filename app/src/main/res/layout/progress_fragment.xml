@@ -5,8 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Progress Fragment xml -->
-
+    <!-- Progress Fragment title -->
     <TextView
         android:id="@+id/office_hours_label"
         android:layout_width="wrap_content"
@@ -15,6 +14,11 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-
+    <!-- AnyChart for graph -->
+    <com.anychart.AnyChartView
+        android:id="@+id/any_chart_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

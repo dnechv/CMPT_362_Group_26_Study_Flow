@@ -70,6 +70,38 @@
             android:textColor="@color/white"
             android:layout_marginBottom="16dp" />
 
+        <!-- Start Time  -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start Time"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/start_time_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Start Time"
+            android:textColor="@color/white"
+            android:layout_marginBottom="16dp" />
+
+        <!-- End Time  -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="End Time"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+        <Button
+            android:id="@+id/end_time_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select End Time"
+            android:textColor="@color/white"
+            android:layout_marginBottom="16dp" />
+
         <!-- Recurring Days Option -->
         <TextView
             android:layout_width="match_parent"
@@ -111,12 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fri" />
-
         </LinearLayout>
 
-
-        </LinearLayout>
-
-
-
+    </LinearLayout>
 </ScrollView>

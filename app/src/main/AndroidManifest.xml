@@ -2,28 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />
-
-    <!-- Permissions  -->
-
+        android:required="true" /> <!-- Permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-
-    <!-- Accelometer shake to undo  -->
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-
-
-
-    <!-- Network Permissions to connect   -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Accelometer shake to undo -->
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" /> <!-- Network Permissions to connect -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
@@ -37,6 +27,12 @@
         android:theme="@style/Theme.StudyFlow"
         tools:targetApi="31">
         <activity
+            android:name=".loginPage.SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".loginPage.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -46,12 +42,9 @@
             </intent-filter>
         </activity>
 
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="your_channel_id" />
-
-
     </application>
 
 </manifest>

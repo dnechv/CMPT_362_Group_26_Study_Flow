@@ -10,17 +10,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studyflow.R
-import com.example.studyflow.adapters.CoursesAdapter
 import com.example.studyflow.adapters.HomeworkAdapter
+import com.example.studyflow.animation.HomeWorkSwipeGesture
 import com.example.studyflow.database_cloud.Courses
 import com.example.studyflow.database_cloud.Homework
 import com.example.studyflow.repository.CoursesRepository
@@ -32,6 +32,9 @@ private lateinit var homeworkViewModel : HomeworkViewModel
 private lateinit var CViewModel : CoursesViewModel
 private lateinit var homeworkAdapter : HomeworkAdapter
 private lateinit var addHWBtn : FloatingActionButton
+
+private var lastDeletedHW: Homework? = null
+private var lastDeletedHWPosition: Int? = null
 
 
 
@@ -57,10 +60,44 @@ class homework_fragment : Fragment() {
         //setting the layout manager
         recyclerView.layoutManager = LinearLayoutManager(context)
 
+
+
+        val swipeGesture = HomeWorkSwipeGesture(
+            homeworkAdapter,
+
+            //callback for delete
+            onDeleteCallback = { deletedCourse, position ->
+
+                // Logic for handling delete
+
+                //record deleted course
+                lastDeletedHW = deletedCourse
+
+                //record position of the delted course
+                lastDeletedHWPosition = position
+
+
+                //update the adapter
+                homeworkAdapter.deleteHW(position)
+
+
+                Log.d("CoursesFragment", "Deleted course: $deletedCourse at position: $position")
+            },
+            onEditCallback = { courseToEdit, position ->
+                // Logic for handling edit
+
+                showEditHWDialog(courseToEdit, position)
+
+                //showEditCourseDialog(courseToEdit, position) // Show edit dialog
+                Log.d("CoursesFragment", "Editing course: $courseToEdit at position: $position")
+            }
+        )
+
+        val itemTouchHelper = ItemTouchHelper(swipeGesture)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
         //connecting adapter with recycler view
         recyclerView.adapter = homeworkAdapter
-
-
 
 
         addHWBtn = view.findViewById(R.id.addHomeWorkBtn)
@@ -69,7 +106,7 @@ class homework_fragment : Fragment() {
         var coursesNameList = mutableListOf<String>()
         CR.getCourses { courses ->
             aa = courses
-            Log.d("COURSENAMEADD" , aa[1].courseName)
+            //Log.d("COURSENAMEADD" , aa[1].courseName)
             for (course in aa ) {
                 Log.d("COURSENAMEADD" , course.courseName)
                 coursesNameList.add(course.courseName)
@@ -136,18 +173,52 @@ class homework_fragment : Fragment() {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val HWName = dialogView.findViewById<EditText>(R.id.nameET).text.toString()
             val HWDueTime = dialogView.findViewById<EditText>(R.id.timeET).text.toString()
+            val HWmark = dialogView.findViewById<EditText>(R.id.markET).text.toString()
 
 
             //check if the fields are not empty
             if (HWName.isNotEmpty() && HWDueTime.isNotEmpty()) {
-                val newHW = Homework(homeworkName = HWName, homeworkDueTime = HWDueTime, courseName = courseName)
+                val newHW = Homework(homeworkName = HWName, homeworkDueTime = HWDueTime, courseName = courseName, homeworkDescription = HWmark)
                 homeworkViewModel.addHomework(newHW) // Add the hw
-               // homeworkViewModel.getHomework() //refresh
+                // homeworkViewModel.getHomework() //refresh
                 dialog.dismiss()
             } else {
                 dialogView.findViewById<EditText>(R.id.nameET).error = "Field required"
                 dialogView.findViewById<EditText>(R.id.timeET).error = "Field required"
             }
         }
+    }
+
+    private fun showEditHWDialog(hw: Homework, position: Int) {
+        // Inflate the custom dialog layout
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.edit_homework_dialog, null)
+
+        // Populate fields with the current course data
+        val homeworkNameEditText = dialogView.findViewById<EditText>(R.id.nameETEdit)
+        val homeworkTimeEditText = dialogView.findViewById<EditText>(R.id.timeETEdit)
+        val homeworkMarkEditText = dialogView.findViewById<EditText>(R.id.markETEdit)
+
+        homeworkNameEditText.setText(hw.homeworkName)
+        homeworkTimeEditText.setText(hw.homeworkDueTime)
+        homeworkMarkEditText.setText(hw.homeworkMark)
+
+        // Create and show the dialog
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Edit Course")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                // Update the course details
+                val updatedHW = hw.copy(
+                    homeworkName = homeworkNameEditText.text.toString(),
+                    homeworkDueTime = homeworkTimeEditText.text.toString(),
+                    homeworkMark = homeworkMarkEditText.text.toString()
+                )
+
+                // Notify adapter and update database
+                homeworkAdapter.updateHWAtPosition(updatedHW, position)
+                homeworkViewModel.updateHW(updatedHW) // Update in the database
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

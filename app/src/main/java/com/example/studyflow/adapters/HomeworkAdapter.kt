@@ -49,4 +49,30 @@ class HomeworkAdapter(private var homeworks: MutableList<Homework>) : RecyclerVi
         homeworks.add(HW)
         notifyItemInserted(homeworks.size - 1)
     }
+
+    //get position of courses -> used for swipe gesture
+    fun getHWAtPosition(position: Int): Homework {
+        return homeworks[position]
+    }
+
+    // delete
+    fun deleteHW(position: Int) {
+        if (position in homeworks.indices) {
+            homeworks.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+    //restore course -> used for swipe gesture
+    fun restoreHW(hw: Homework, position: Int) {
+        homeworks.add(position, hw)
+        notifyItemInserted(position)
+    }
+
+    fun updateHWAtPosition(updatedHW: Homework, position: Int) {
+        if (position in homeworks.indices) {
+            homeworks[position] = updatedHW
+            notifyItemChanged(position)
+        }
+    }
 }

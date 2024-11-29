@@ -1,7 +1,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp">
@@ -12,6 +12,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- name -->
         <TextView
             android:id="@+id/course_name_item_tableview"
             android:layout_width="match_parent"
@@ -21,6 +22,7 @@
             android:textStyle="bold"
             android:textColor="@color/black" />
 
+        <!-- term -->
         <TextView
             android:id="@+id/course_term_item_tableview"
             android:layout_width="match_parent"
@@ -29,13 +31,41 @@
             android:textSize="14sp"
             android:textColor="@color/material_dynamic_primary0" />
 
-        <!-- line between patient photo and name -->
+        <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
             android:background="@android:color/darker_gray" />
 
-    </LinearLayout>
+        <!-- Start + End Date -->
+        <TextView
+            android:id="@+id/course_dates_item_tableview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="From: 01/01/2024 to 30/04/2024"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/black" />
 
+        <!-- Time -->
+        <TextView
+            android:id="@+id/course_time_item_tableview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time: 10:00 AM - 12:00 PM"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black" />
+
+        <!-- Days -->
+        <TextView
+            android:id="@+id/course_days_item_tableview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Days: Monday, Wednesday, Friday"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black" />
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

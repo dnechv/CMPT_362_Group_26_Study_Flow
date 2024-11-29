@@ -14,6 +14,8 @@ data class Courses(
 
     val courseEndDate: String? = null,
 
+    val courseStartTime: String = "",
+
     val courseEndTime: String = "",
 
     val courseInstructor: String = "",
@@ -25,8 +27,6 @@ data class Courses(
     val courseName: String = "",
 
     val courseStartDate: String? = null,
-
-    val courseStartTime: String = "",
 
     val courseTerm: String = ""
 )

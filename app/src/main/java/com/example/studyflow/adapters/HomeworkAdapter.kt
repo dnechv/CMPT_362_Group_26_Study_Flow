@@ -19,8 +19,9 @@ class HomeworkAdapter(private var homeworks: MutableList<Homework>) : RecyclerVi
 
         //binding data to views
         fun bind(homework: Homework) {
+            val dueDateTime = "${homework.homeworkDueDate} ${homework.homeworkDueTime}"
             HWName.text = homework.homeworkName //setting the homework name
-            HWdue.text = homework.homeworkDueTime //setting the homework term
+            HWdue.text = "${homework.homeworkDueDate} ${homework.homeworkDueTime}" //setting the homework due
             HWcourse.text = homework.courseName  //setting the homework course name
         }
     }

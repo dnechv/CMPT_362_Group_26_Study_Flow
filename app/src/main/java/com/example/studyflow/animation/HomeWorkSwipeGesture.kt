@@ -27,7 +27,7 @@ class HomeWorkSwipeGesture (
 
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
-    //swipe left - delete hw
+    //swipe left - delete course
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
@@ -78,11 +78,11 @@ class HomeWorkSwipeGesture (
                 //SWIPE RIGHT TO EDIT THE COURSE
 
                 //get the course
-                val hwToEdit = HWAdapter.getHWAtPosition(position)
+                val courseToEdit = HWAdapter.getHWAtPosition(position)
 
 
                 //notify the fragment about the course that was edited
-                onEditCallback(hwToEdit, position)
+                onEditCallback(courseToEdit, position)
 
                 //update the database - edit
                 HWAdapter.notifyItemChanged(position)

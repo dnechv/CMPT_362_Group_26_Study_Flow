@@ -14,7 +14,6 @@ class HomeworkRepository {
 
     //adds homework to the database
     fun addHomework(homework: Homework) {
-
         val docRef = firebaseDataBase.collection("homework").document()
         val hwID = homework.copy(id = docRef.id)
         docRef.set(hwID)
@@ -26,15 +25,6 @@ class HomeworkRepository {
                 Log.d("HomeworkRepository", "Failed to add homework", exception)
 
             }
-//        firebaseDataBase.collection("homework").document()
-//            .set(homework)
-//            .addOnSuccessListener {
-//                Log.d("HomeworkRepository", "Homework added successfully")
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.d("HomeworkRepository", "Failed to add homework", exception)
-//
-//            }
     }
 
     //function to get homework from the database
@@ -59,5 +49,18 @@ class HomeworkRepository {
         }
     }
 
+    fun getSortedSpecificHomworks (chosenCourse : String,onSuccess: (List<Homework>) -> Unit) {
+        firebaseDataBase.collection("homework")
+            .whereEqualTo("courseId", chosenCourse )
+            .orderBy("homeworkDueDate")
+            .get()
+            .addOnSuccessListener { result ->
+                val homework = result.toObjects(Homework::class.java)
+                onSuccess(homework)
+            }
+            .addOnFailureListener { exception ->
+                Log.d("HCTE", "Failed to get homework", exception)
+            }
 
+    }
 }

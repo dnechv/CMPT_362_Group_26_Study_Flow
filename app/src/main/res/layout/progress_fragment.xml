@@ -5,16 +5,50 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Progress Fragment xml -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginHorizontal="15dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
+        <AutoCompleteTextView
+            android:id="@+id/InputTypeAutoC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="choose a course"
+            android:text=""
+            android:inputType="none"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/showProgressBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"/>
+
+
+
+    <!-- Progress Fragment title -->
     <TextView
-        android:id="@+id/office_hours_label"
+        android:id="@+id/progressTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Progress Fragment"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible"/>
 
-
+    <!-- AnyChart for graph -->
+    <com.anychart.AnyChartView
+        android:id="@+id/any_chart_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"/>
 
 </LinearLayout>

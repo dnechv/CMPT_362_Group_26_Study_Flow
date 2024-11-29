@@ -5,11 +5,14 @@ package com.example.studyflow.fragments
 // Imports
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -27,6 +30,8 @@ import com.example.studyflow.repository.CoursesRepository
 import com.example.studyflow.view_models.CoursesViewModel
 import com.example.studyflow.view_models.HomeworkViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Calendar
+import java.util.Locale
 
 private lateinit var homeworkViewModel : HomeworkViewModel
 private lateinit var CViewModel : CoursesViewModel
@@ -70,10 +75,10 @@ class homework_fragment : Fragment() {
 
                 // Logic for handling delete
 
-                //record deleted hw
+                //record deleted course
                 lastDeletedHW = deletedHW
 
-                //record position of the deleted hw
+                //record position of the delted course
                 lastDeletedHWPosition = position
 
 
@@ -82,16 +87,15 @@ class homework_fragment : Fragment() {
 
                 homeworkViewModel.deleteHomework(deletedHW)
 
-
-                Log.d("hwFragment", "Deleted hw: $deletedHW at position: $position")
+                Log.d("CoursesFragment", "Deleted course: $deletedHW at position: $position")
             },
-            onEditCallback = { hwToEdit, position ->
+            onEditCallback = { courseToEdit, position ->
                 // Logic for handling edit
 
-                showEditHWDialog(hwToEdit, position)
+                showEditHWDialog(courseToEdit, position)
 
-                //showEditCourseDialog(hwToEdit, position) // Show edit dialog
-                Log.d("CoursesFragment", "Editing course: $hwToEdit at position: $position")
+                //showEditCourseDialog(courseToEdit, position) // Show edit dialog
+                Log.d("CoursesFragment", "Editing course: $courseToEdit at position: $position")
             }
         )
 
@@ -106,11 +110,14 @@ class homework_fragment : Fragment() {
         val CR = CoursesRepository()
         var aa : List<Courses> = listOf()
         var coursesNameList = mutableListOf<String>()
+        var coursesID = mutableListOf<String>()
         CR.getCourses { courses ->
             aa = courses
+            //Log.d("COURSENAMEADD" , aa[1].courseName)
             for (course in aa ) {
                 Log.d("COURSENAMEADD" , course.courseName)
                 coursesNameList.add(course.courseName)
+                coursesID.add(course.id)
             }
         }
 
@@ -118,7 +125,7 @@ class homework_fragment : Fragment() {
 
 
         addHWBtn.setOnClickListener() {
-            showSelectCourse(coursesNameList.toTypedArray())
+            showSelectCourse(coursesNameList.toTypedArray() , coursesID.toTypedArray())
             Log.d("COURSENAME", coursesNameList.toString())
         }
 
@@ -140,14 +147,14 @@ class homework_fragment : Fragment() {
 
 
     //show the dialog to select the course first
-    private fun showSelectCourse(array : Array<String>) {
+    private fun showSelectCourse(array : Array<String> , idArray: Array<String>) {
         val dialogView = AlertDialog.Builder(requireContext())
 
         dialogView.setItems(array) {_, which ->
             when(which) {
                 which -> {
                     Toast.makeText(requireContext(),array[which], Toast.LENGTH_LONG).show()
-                    showAddHWDialog(array[which]) //passing to course name to the showAddHWDialog
+                    showAddHWDialog(array[which] , idArray[which]) //passing to course name to the showAddHWDialog
 
                 }
             }
@@ -157,7 +164,7 @@ class homework_fragment : Fragment() {
     }
 
     @SuppressLint("MissingInflatedId")
-    private fun showAddHWDialog(courseName : String) {
+    private fun showAddHWDialog(courseName : String , courseID : String) {
 
         //finding the xml
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.adding_homework, null)
@@ -168,24 +175,40 @@ class homework_fragment : Fragment() {
             .setPositiveButton("Add", null) //setting the positive button
             .setNegativeButton("Cancel", null)//setting the negative button
             .show()
-        val HWCOurseName = dialogView.findViewById<TextView>(R.id.CourseNameTV)
-        HWCOurseName.text = courseName
+        val HWCOurseName = dialogView.findViewById<EditText>(R.id.CourseNameTV)
+        val dueDateBtn = dialogView.findViewById<Button>(R.id.dueDateBtn)
+        val dueTimeBtn = dialogView.findViewById<Button>(R.id.dueTimeBtn)
+
+        HWCOurseName.setText(courseName)
+
+        dueDateBtn.setOnClickListener{
+            showDatePickerDialog { selectedDate ->
+                dueDateBtn.text = selectedDate
+            }
+        }
+
+        dueTimeBtn.setOnClickListener{
+            showTimePickerDialog { selectedTime ->
+                dueTimeBtn.text = selectedTime
+            }
+        }
+
         //setting the positive button listener
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val HWName = dialogView.findViewById<EditText>(R.id.nameET).text.toString()
-            val HWDueTime = dialogView.findViewById<EditText>(R.id.timeET).text.toString()
-            val HWmark = dialogView.findViewById<EditText>(R.id.markET).text.toString()
+            val HWDueTime = dueTimeBtn.text
+            val HWDueDate = dueDateBtn.text
+            val HWDesc = dialogView.findViewById<EditText>(R.id.hwDesc).text.toString()
 
 
             //check if the fields are not empty
-            if (HWName.isNotEmpty() && HWDueTime.isNotEmpty()) {
-                val newHW = Homework(homeworkName = HWName, homeworkDueTime = HWDueTime, courseName = courseName, homeworkDescription = HWmark)
+            if (HWName.isNotEmpty() && HWDueTime.isNotEmpty() && HWDueTime.isNotEmpty()) {
+                val newHW = Homework(homeworkName = HWName, homeworkDueDate = HWDueDate.toString(),homeworkDueTime = HWDueTime.toString(), courseName = courseName, homeworkDescription = HWDesc , courseId = courseID )
                 homeworkViewModel.addHomework(newHW) // Add the hw
                 // homeworkViewModel.getHomework() //refresh
                 dialog.dismiss()
             } else {
                 dialogView.findViewById<EditText>(R.id.nameET).error = "Field required"
-                dialogView.findViewById<EditText>(R.id.timeET).error = "Field required"
             }
         }
     }
@@ -199,16 +222,17 @@ class homework_fragment : Fragment() {
         val homeworkTimeEditText = dialogView.findViewById<EditText>(R.id.timeETEdit)
         val homeworkMarkEditText = dialogView.findViewById<EditText>(R.id.markETEdit)
 
+
         homeworkNameEditText.setText(hw.homeworkName)
         homeworkTimeEditText.setText(hw.homeworkDueTime)
         homeworkMarkEditText.setText(hw.homeworkMark)
 
         // Create and show the dialog
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Edit Homework")
+            .setTitle("Edit Course")
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
-                // Update the hw details
+                // Update the course details
                 val updatedHW = hw.copy(
                     homeworkName = homeworkNameEditText.text.toString(),
                     homeworkDueTime = homeworkTimeEditText.text.toString(),
@@ -221,5 +245,30 @@ class homework_fragment : Fragment() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+
+            //format the  date
+            val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            onDateSelected(formattedDate)
+        }, year, month, day).show()
+    }
+
+    private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        TimePickerDialog(requireContext(), { _, selectedHour, selectedMinute ->
+            val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+            onTimeSelected(formattedTime)
+        }, hour, minute, true).show()
     }
 }

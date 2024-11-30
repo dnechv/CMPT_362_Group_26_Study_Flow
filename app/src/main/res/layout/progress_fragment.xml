@@ -44,11 +44,16 @@
         android:visibility="invisible"/>
 
     <!-- AnyChart for graph -->
-    <com.anychart.AnyChartView
-        android:id="@+id/any_chart_view"
+
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/Linechart"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginTop="16dp"
-        android:visibility="invisible"/>
+        android:layout_marginTop="18dp"
+        />
+
+
+
 
 </LinearLayout>

@@ -56,7 +56,10 @@ class homework_fragment : Fragment() {
         homeworkViewModel = ViewModelProvider(this).get(HomeworkViewModel::class.java)
 
 
-        homeworkAdapter = HomeworkAdapter(mutableListOf())
+        homeworkAdapter = HomeworkAdapter(mutableListOf()) {
+            //show dialog when tapped on individual hw
+                homework -> showMarkDialog(homework)
+        }
 
         //finding the recycler view from xml
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewHW)
@@ -148,7 +151,9 @@ class homework_fragment : Fragment() {
 
     //show the dialog to select the course first
     private fun showSelectCourse(array : Array<String> , idArray: Array<String>) {
+        val chooseCourseTitleDialog = LayoutInflater.from(requireContext()).inflate(R.layout.choose_course_title_dialog, null)
         val dialogView = AlertDialog.Builder(requireContext())
+            .setCustomTitle(chooseCourseTitleDialog)
 
         dialogView.setItems(array) {_, which ->
             when(which) {
@@ -168,10 +173,11 @@ class homework_fragment : Fragment() {
 
         //finding the xml
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.adding_homework, null)
+        val addHwTitleDialog = LayoutInflater.from(requireContext()).inflate(R.layout.add_homework_title_dialog, null)
         //creating dialog
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)//setting the view
-            .setTitle("Add Homework")//setting the title
+            .setCustomTitle(addHwTitleDialog)//setting the title
             .setPositiveButton("Add", null) //setting the positive button
             .setNegativeButton("Cancel", null)//setting the negative button
             .show()
@@ -216,27 +222,48 @@ class homework_fragment : Fragment() {
     private fun showEditHWDialog(hw: Homework, position: Int) {
         // Inflate the custom dialog layout
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.edit_homework_dialog, null)
+        val editHwTitleDialog = LayoutInflater.from(requireContext()).inflate(R.layout.edit_homework_title_dialog, null)
 
         // Populate fields with the current course data
         val homeworkNameEditText = dialogView.findViewById<EditText>(R.id.nameETEdit)
-        val homeworkTimeEditText = dialogView.findViewById<EditText>(R.id.timeETEdit)
-        val homeworkMarkEditText = dialogView.findViewById<EditText>(R.id.markETEdit)
+        val homeworkDueDateBtn = dialogView.findViewById<Button>(R.id.dueDateBtnEdit)
+        val homeworkDueTimeBtn = dialogView.findViewById<Button>(R.id.dueTimeBtnEdit)
+        val homeworkMarkEditText = dialogView.findViewById<EditText>(R.id.MarkETEdit)
+        val homeworkDescEditText = dialogView.findViewById<EditText>(R.id.hwDescEdit)
+        val courseNameEt = dialogView.findViewById<EditText>(R.id.CourseNameTVEdit)
 
 
         homeworkNameEditText.setText(hw.homeworkName)
-        homeworkTimeEditText.setText(hw.homeworkDueTime)
+        homeworkDueDateBtn.setText(hw.homeworkDueDate)
+        homeworkDueTimeBtn.setText(hw.homeworkDueTime)
         homeworkMarkEditText.setText(hw.homeworkMark)
+        homeworkDescEditText.setText(hw.homeworkDescription)
+        courseNameEt.setText(hw.courseName)
+
+        homeworkDueDateBtn.setOnClickListener{
+            showDatePickerDialog { selectedDate ->
+                homeworkDueDateBtn.text = selectedDate
+            }
+        }
+
+        homeworkDueTimeBtn.setOnClickListener{
+            showTimePickerDialog { selectedTime ->
+                homeworkDueTimeBtn.text = selectedTime
+            }
+        }
 
         // Create and show the dialog
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Edit Course")
+            .setCustomTitle(editHwTitleDialog)
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
                 // Update the course details
                 val updatedHW = hw.copy(
                     homeworkName = homeworkNameEditText.text.toString(),
-                    homeworkDueTime = homeworkTimeEditText.text.toString(),
-                    homeworkMark = homeworkMarkEditText.text.toString()
+                    homeworkDueDate = homeworkDueDateBtn.text.toString(),
+                    homeworkDueTime = homeworkDueTimeBtn.text.toString(),
+                    homeworkMark = homeworkMarkEditText.text.toString(),
+                    homeworkDescription = homeworkDescEditText.text.toString()
                 )
 
                 // Notify adapter and update database
@@ -270,5 +297,34 @@ class homework_fragment : Fragment() {
             val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
             onTimeSelected(formattedTime)
         }, hour, minute, true).show()
+    }
+
+    private fun showMarkDialog(hw: Homework){
+        // Inflate the custom dialog layout
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.homework_add_mark_dialog, null)
+        val addHwMarkTitleDialog = LayoutInflater.from(requireContext()).inflate(R.layout.homework_add_mark_title_dialog, null)
+
+        val homeworkNameEditText = dialogView.findViewById<EditText>(R.id.hwNameETmark)
+        val homeworkMarkEditText = dialogView.findViewById<EditText>(R.id.addMarkEt)
+
+        homeworkNameEditText.setText(hw.homeworkName)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setCustomTitle(addHwMarkTitleDialog)
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                // Update the course details
+                val updatedHW = hw.copy(
+                    homeworkMark = homeworkMarkEditText.text.toString(),
+
+                )
+
+                // Notify adapter and update database
+                homeworkViewModel.updateHW(updatedHW) // Update in the database
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+
+
     }
 }

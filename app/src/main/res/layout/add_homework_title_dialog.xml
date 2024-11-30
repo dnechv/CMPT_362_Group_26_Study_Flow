@@ -1,0 +1,10 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Add Homework"
+    android:gravity="center"
+    android:textSize="20sp"
+    android:textStyle="bold"
+    android:padding="16dp"
+    android:background="@color/white"
+    android:textColor="@color/black" />

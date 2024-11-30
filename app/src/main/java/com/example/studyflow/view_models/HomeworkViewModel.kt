@@ -47,21 +47,35 @@ class HomeworkViewModel:ViewModel() {
         homeworkRepository.deleteHomework(homework)
     }
 
-    //update course
+    //update hw
     fun updateHW(hw: Homework) {
-        val HWId = hw.courseId
+        val HWId = hw.id
 
         //get reference to firebase
-        val databaseReference = FirebaseDatabase.getInstance().getReference("homework/$HWId")
+//        val databaseReference = FirebaseDatabase.getInstance().getReference("homework/$HWId")
+//
+//        //update the hw
+//        databaseReference.setValue(hw)
+//            .addOnSuccessListener {
+//                Log.d("HomeworkViewModel", "Course updated successfully!")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("HomeworkViewModel", "Failed to update course", e)
+//            }
 
-        //update the course
-        databaseReference.setValue(hw)
-            .addOnSuccessListener {
-                Log.d("CoursesViewModel", "Course updated successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("CoursesViewModel", "Failed to update course", e)
-            }
+        if (HWId.isNotEmpty()) {
+            val firestoreReference = homeworkRepository.getFirestoreDatabaseReference().collection("homework").document(HWId)
+
+            firestoreReference.set(hw)
+                .addOnSuccessListener {
+                    Log.d("HwViewModel", "Homework updated successfully!")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("HwViewModel", "Failed to update homework", e)
+                }
+        } else {
+            Log.e("HwViewModel", "Cannot update homework: Missing course ID")
+        }
     }
 
 

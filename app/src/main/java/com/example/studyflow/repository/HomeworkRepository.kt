@@ -12,6 +12,11 @@ class HomeworkRepository {
         //creating database variable
         private val firebaseDataBase = FirebaseFirestore.getInstance()
 
+
+    fun getFirestoreDatabaseReference(): FirebaseFirestore {
+
+        return firebaseDataBase
+    }
     //adds homework to the database
     fun addHomework(homework: Homework) {
         val docRef = firebaseDataBase.collection("homework").document()

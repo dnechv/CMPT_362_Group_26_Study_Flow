@@ -1,0 +1,17 @@
+{
+  "installationFolder": "/Users/dnechv/Desktop/StudyFlow/open_cv_sdk/build/intermediates/prefab_package/debug/prefab",
+  "gradlePath": ":open_cv_sdk",
+  "packageInfo": {
+    "packageName": "open_cv_sdk",
+    "packageSchemaVersion": 2,
+    "packageDependencies": [],
+    "modules": [
+      {
+        "moduleName": "opencv_jni_shared",
+        "moduleHeaders": "/Users/dnechv/Desktop/StudyFlow/open_cv_sdk/native/jni/include",
+        "moduleExportLibraries": [],
+        "abis": []
+      }
+    ]
+  }
+}

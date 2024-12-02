@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR.js with Local Graph</title>
+
+  <!-- A-Frame and AR.js Libraries -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.min.js"></script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const imageUrl = params.get('imageUrl'); 
+
+      console.log("Loaded image URL:", imageUrl); // Debugging the image URL
+
+      if (imageUrl) {
+        const arImage = document.querySelector('#dynamic-ar-image');
+        arImage.setAttribute('src', imageUrl);
+      } else {
+        console.error('No imageUrl provided in query parameters.');
+        alert('No image found. Please pass a valid image URL as a query parameter.');
+      }
+    });
+  </script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+
+  <!-- AR Scene -->
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; videoTexture: true;">
+    <!-- Dynamic Graph Image -->
+    <a-image id="dynamic-ar-image"
+             position="0 1 -2" 
+             scale="1.5 1.5 1" 
+             rotation="0 0 0">
+    </a-image>
+
+    <!-- Camera -->
+    <a-entity camera></a-entity>
+  </a-scene>
+
+</body>
+</html>

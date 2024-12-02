@@ -70,6 +70,17 @@
             />
 
 
+        <!-- "View in AR" Button -->
+        <Button
+            android:id="@+id/viewInARButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View in AR"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            />
+
+
 
     </LinearLayout>
 

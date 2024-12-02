@@ -32,6 +32,10 @@
         <activity
             android:name=".loginPage.LoginActivity"
             android:exported="false" />
+
+        <activity
+             android:name=".fragments.ar_activity"
+             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -45,6 +49,11 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="your_channel_id" />
+
+        <meta-data
+            android:name="androidx.camera.core.CameraXConfig.Provider"
+            android:value="androidx.camera.camera2.Camera2Config.Provider" />
+
     </application>
 
 </manifest>

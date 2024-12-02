@@ -3,6 +3,7 @@ package com.example.studyflow.fragments
 // displays progress here
 
 // Imports
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.studyflow.fragments.ar_activity
 import com.example.studyflow.R
 import com.example.studyflow.database_cloud.Homework
 import com.example.studyflow.repository.CoursesRepository
@@ -29,6 +31,10 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.mapbox.maps.extension.style.expressions.dsl.generated.any
 
+
+
+
+
 class progress_fragment : Fragment() {
     lateinit var courseNames : MutableList<String>
     private lateinit var courseIds : MutableList<String>
@@ -39,19 +45,29 @@ class progress_fragment : Fragment() {
     private val CR = CoursesRepository()
 
 
+    //to hold homework names for AR
+    private var homeworkNames: MutableList<String> = mutableListOf()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
 
         //INFLATE layout
         val view = inflater.inflate(R.layout.progress_fragment, container, false)
 
         // items from the layout
         //val anyChartView: AnyChartView = view.findViewById(R.id.any_chart_view)
+
         val courseAutoC = view.findViewById<AutoCompleteTextView>(R.id.InputTypeAutoC)
+
         showBtn = view.findViewById(R.id.showProgressBtn)
+
         progressTV = view.findViewById(R.id.progressTV)
+
         lineChart = view.findViewById(R.id.Linechart)
 
 
@@ -59,6 +75,61 @@ class progress_fragment : Fragment() {
 
         courseNames = mutableListOf<String>()
         courseIds = mutableListOf<String>()
+
+
+        //FIND THE OPEN IN AR BUTTON
+        val viewInARButton = view.findViewById<Button>(R.id.viewInARButton)
+
+        //SET ON CLICK LISTENER FOR THE OPEN IN AR BUTTON
+
+        viewInARButton.setOnClickListener {
+            if (lineChart.data != null) {
+
+                // Serialize data entries - x and y values as flota
+
+                //creating data entries to hold the x and y values
+                val dataEntries = mutableListOf<Pair<Float, Float>>()
+
+                //iterate through all data entries
+                for (i in 0 until lineChart.data.getDataSetByIndex(0).entryCount) {
+
+
+
+                    //get the entry at index i
+                    val entry = lineChart.data.getDataSetByIndex(0).getEntryForIndex(i)
+
+
+                    //add the x and y values to the dataEntries list
+                    dataEntries.add(Pair(entry.x, entry.y))
+                }
+
+                // get array homework data
+                val homeworkNamesArray = homeworkNames.toTypedArray()
+
+                // start ar_activity
+                val intent = Intent(requireContext(), ar_activity::class.java)
+                intent.putExtra("dataEntries", ArrayList(dataEntries))
+                intent.putExtra("homeworkNames", homeworkNamesArray)
+
+
+
+                startActivity(intent)
+
+
+            } else {
+
+
+                // Show a message if no data is available
+
+
+                progressTV.text = "No Chart Data available."
+
+
+
+                progressTV.visibility = View.VISIBLE
+            }
+        }
+
 
 
 
@@ -95,7 +166,7 @@ class progress_fragment : Fragment() {
 
     private fun setChartByCourse2(courseName: String, HWList: List<Homework>, lineChart: LineChart) {
         val dataEntries = mutableListOf<Entry>()
-        val homeworkNames = mutableListOf<String>()
+
 
         // Populate the data entries for the selected course
         var i = 0

@@ -1,6 +1,7 @@
 package com.example.studyflow.fragments
 
 import android.animation.ValueAnimator
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -8,6 +9,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.studyflow.R
 import com.github.mikephil.charting.charts.LineChart
@@ -19,12 +21,15 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 
 
 
-//contiains the graph code
+//contains the graph code to simulate AR effect
 //pulls data from the progress tab via intent -> data is in the form of a list of pairs of floats
 
 
 class ar_activity : AppCompatActivity(), SensorEventListener {
 
+
+    //camera permission code
+    private val CAMERA_PERMISSION_CODE = 100
 
     //chart initalization
     private lateinit var lineChart: LineChart
@@ -43,14 +48,20 @@ class ar_activity : AppCompatActivity(), SensorEventListener {
 
 
 
-    //record last location values as -> store the previous tile valus for stabilizztion
-    //initalized to 0
+    //record last location values as -> store the previous tile values for stabilization
+
+
+    //initalized to 0 initially
     private var lastRotationX = 0f
     private var lastRotationY = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ar_activity)
+
+
+        //check for camera permission
+        checkAndRequestCameraPermission()
 
         // Initialize the LineChart
         lineChart = findViewById(R.id.lineChartAR)
@@ -79,7 +90,7 @@ class ar_activity : AppCompatActivity(), SensorEventListener {
         }
 
         // Initialize the camera -> background
-        initializeCamera()
+       // initializeCamera()
 
         // Initialize sensors - tracking
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -88,6 +99,51 @@ class ar_activity : AppCompatActivity(), SensorEventListener {
 
         // Add floating animation
         addFloatingAnimation()
+    }
+
+
+
+    //check for camera permission
+    private fun checkAndRequestCameraPermission() {
+
+
+        // Check if the camera permission is granted
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // permission to use camera not granted
+            ActivityCompat.requestPermissions(
+
+
+                this,
+                arrayOf(android.Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+        } else {
+
+
+            //granted skip and work on the camera
+            initializeCamera()
+        }
+    }
+
+    // Handle the result of the permission request
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, initialize the camera
+                initializeCamera()
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Camera permission is required to use this feature.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 

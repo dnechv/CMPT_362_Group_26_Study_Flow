@@ -13,10 +13,16 @@ class HomeworkRepository {
         private val firebaseDataBase = FirebaseFirestore.getInstance()
 
 
+
+    //gets firebase reference
     fun getFirestoreDatabaseReference(): FirebaseFirestore {
 
         return firebaseDataBase
     }
+
+
+
+
     //adds homework to the database
     fun addHomework(homework: Homework) {
         val docRef = firebaseDataBase.collection("homework").document()
@@ -45,6 +51,8 @@ class HomeworkRepository {
             }
     }
 
+
+
     //delete homework
     fun deleteHomework(homework: Homework) {
         firebaseDataBase.collection("homework").document(homework.id)
@@ -54,14 +62,22 @@ class HomeworkRepository {
         }
     }
 
+
+    //get homework by course
     fun getSortedSpecificHomworks (chosenCourse : String,onSuccess: (List<Homework>) -> Unit) {
+
+
         firebaseDataBase.collection("homework")
             .whereEqualTo("courseId", chosenCourse )
             .orderBy("homeworkDueDate")
             .get()
+
+
             .addOnSuccessListener { result ->
                 val homework = result.toObjects(Homework::class.java)
                 onSuccess(homework)
+
+
             }
             .addOnFailureListener { exception ->
                 Log.d("HCTE", "Failed to get homework", exception)

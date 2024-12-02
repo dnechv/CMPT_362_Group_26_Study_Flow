@@ -32,10 +32,18 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.mapbox.maps.extension.style.expressions.dsl.generated.any
 
 
+//progress_fragment contains the code for displaying the progress of the user in a line chart
+//the user can select a course from the dropdown menu and view their progress in that course
+//the progress is displayed in a line chart
+
+
 
 
 
 class progress_fragment : Fragment() {
+
+
+    //variables
     lateinit var courseNames : MutableList<String>
     private lateinit var courseIds : MutableList<String>
     private lateinit var  showBtn : Button
@@ -211,27 +219,47 @@ class progress_fragment : Fragment() {
             xAxis.textSize = 12f
             xAxis.setDrawGridLines(false)
             xAxis.valueFormatter = object : ValueFormatter() {
+
+
                 override fun getFormattedValue(value: Float): String {
                     // Return the corresponding homework name based on the index
                     var index = value.toInt()
                     return if (index >= 0 && index < homeworkNames.size) homeworkNames[index] else ""
                 }
             }
-            // Add padding to the x-axis
-            xAxis.axisMinimum = -0.5f // Add padding to the left
-            xAxis.axisMaximum = dataEntries.size - 0.5f // Add padding to the right
 
 
+            //Customizing X axis of the graph
+
+            xAxis.axisMinimum = -0.5f // padding on the left
+            xAxis.axisMaximum = dataEntries.size - 0.5f // padding on the right
+
+
+
+            // Customize Y-Axis
+
+            //variable to hold y axis
             val yAxisLeft: YAxis = lineChart.axisLeft
+
+
+            //customizing y axis
             yAxisLeft.setDrawGridLines(false)
             yAxisLeft.textSize = 12f
-            yAxisLeft.axisMinimum = 0f // Minimum value for y-axis
-            yAxisLeft.axisMaximum = 100f // Maximum value for y-axis
 
+
+            //set values max and min
+            yAxisLeft.axisMinimum = 0f
+            yAxisLeft.axisMaximum = 100f
+
+
+            // right y axis is
             val yAxisRight: YAxis = lineChart.axisRight
+
+            //disable right y axis
             yAxisRight.isEnabled = false
 
 
+            //customizing line chart
             lineChart.description.isEnabled = false
             lineChart.legend.isEnabled = true
             lineChart.setTouchEnabled(true)

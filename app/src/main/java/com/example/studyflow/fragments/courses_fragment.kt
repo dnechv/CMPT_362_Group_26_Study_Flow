@@ -38,6 +38,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+
+//courses fragment contains the working logic for the courses tab
+
 class courses_fragment : Fragment() {
 
 
@@ -234,8 +237,6 @@ class courses_fragment : Fragment() {
         coursesViewModel.getCourses()
 
 
-        //shake to undo
-
 
 
 
@@ -247,22 +248,34 @@ class courses_fragment : Fragment() {
         return view
     }
 
-    //show popup function
+    //show popup function -> checks if the course is on the selected date
     private fun isCourseOnDate(course: Courses, selectedDate: String, selectedDayOfWeek: String?): Boolean {
+
+
+        //get the date format
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        //get the selected date
         val selectedDateParsed = sdf.parse(selectedDate)
         val courseStartDate = course.courseStartDate?.let { sdf.parse(it) }
         val courseEndDate = course.courseEndDate?.let { sdf.parse(it) }
 
+
+        //check if the selected date is between the start and end date of the course
         if (selectedDateParsed != null && courseStartDate != null && courseEndDate != null) {
 
 
+            //check if the selected date is between the start and end date of the course
             if (!selectedDateParsed.before(courseStartDate) && !selectedDateParsed.after(courseEndDate)) {
 
 
+                //check if the selected day of the week is in the course days
                 return selectedDayOfWeek != null && course.courseDays.contains(selectedDayOfWeek)
             }
         }
+
+
+
         return false
     }
 
@@ -415,6 +428,8 @@ class courses_fragment : Fragment() {
 
         val addCourseTitleDialog = LayoutInflater.from(requireContext()).inflate(R.layout.add_course_title_dialogue, null)
 
+
+        //create dialogue
         val dialog = AlertDialog.Builder(requireContext())
             .setCustomTitle(addCourseTitleDialog)
             .setView(dialogView)
@@ -422,17 +437,24 @@ class courses_fragment : Fragment() {
             .setNegativeButton("Cancel", null)
             .show()
 
+
+        //alert dialog
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val courseName = courseNameEditText.text.toString()
             val courseTerm = courseTermEditText.text.toString()
             val selectedDays = mutableListOf<String>()
 
+
+
+            //checboxes check loginc
             if (mondayCheckBox.isChecked) selectedDays.add("Monday")
             if (tuesdayCheckBox.isChecked) selectedDays.add("Tuesday")
             if (wednesdayCheckBox.isChecked) selectedDays.add("Wednesday")
             if (thursdayCheckBox.isChecked) selectedDays.add("Thursday")
             if (fridayCheckBox.isChecked) selectedDays.add("Friday")
 
+
+            //check for data -> create course entry
             if (courseName.isNotEmpty() && courseTerm.isNotEmpty() && startDate != null && endDate != null && startTime != null && endTime != null) {
                 val newCourse = Courses(
                     courseName = courseName,
@@ -450,6 +472,8 @@ class courses_fragment : Fragment() {
             } else {
 
 
+                //no data
+
                 if (courseName.isEmpty()) courseNameEditText.error = "Field required"
                 if (courseTerm.isEmpty()) courseTermEditText.error = "Field required"
                 if (startDate == null) startDateButton.error = "Select start date"
@@ -461,17 +485,31 @@ class courses_fragment : Fragment() {
     }
 
 
+
+    //shows date picker
     private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
+
+
+        //varibales for objects
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
+
+        //show date picker
         DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
 
             //format the  date
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+
+
+
+            //onDateSelected->  pass the formatted date
             onDateSelected(formattedDate)
+
+
+            //show the date picker
         }, year, month, day).show()
     }
 
@@ -515,20 +553,33 @@ class courses_fragment : Fragment() {
 
    //time picker for time courses
    private fun showTimePickerDialog(onTimeSelected: (String) -> Unit) {
+
+
+       //vals
        val calendar = Calendar.getInstance()
        val hour = calendar.get(Calendar.HOUR_OF_DAY)
        val minute = calendar.get(Calendar.MINUTE)
 
+
+       //show time picker
        TimePickerDialog(requireContext(), { _, selectedHour, selectedMinute ->
+
+           //format time
            val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+
+
+           //onTimeSelected -> pass the formatted time
            onTimeSelected(formattedTime)
+
+
+           //show the time picker
        }, hour, minute, true).show()
    }
 
 
 
 
-
+    //show edit course dialog
     private fun showEditCourseDialog(course: Courses, position: Int) {
 
 
@@ -562,6 +613,7 @@ class courses_fragment : Fragment() {
 
             when (day) {
 
+                //check the days
 
                 "Monday" -> mondayCheckBox.isChecked = true
                 "Tuesday" -> tuesdayCheckBox.isChecked = true
@@ -618,6 +670,7 @@ class courses_fragment : Fragment() {
                 val updatedDays = mutableListOf<String>()
 
                 //update days
+
                 if (mondayCheckBox.isChecked) updatedDays.add("Monday")
                 if (tuesdayCheckBox.isChecked) updatedDays.add("Tuesday")
                 if (wednesdayCheckBox.isChecked) updatedDays.add("Wednesday")
@@ -626,6 +679,7 @@ class courses_fragment : Fragment() {
 
                 //update data
                 val updatedCourse = course.copy(
+
                     courseName = updatedCourseName,
                     courseTerm = updatedCourseTerm,
                     courseStartDate = updatedStartDate,
@@ -633,6 +687,8 @@ class courses_fragment : Fragment() {
                     courseStartTime = updatedStartTime,
                     courseEndTime = updatedEndTime,
                     courseDays = updatedDays
+
+
                 )
 
 

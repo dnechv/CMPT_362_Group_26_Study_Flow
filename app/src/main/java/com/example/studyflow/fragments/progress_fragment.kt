@@ -3,6 +3,7 @@ package com.example.studyflow.fragments
 // displays progress here
 
 // Imports
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +13,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.studyflow.fragments.ar_activity
 import com.example.studyflow.R
 import com.example.studyflow.database_cloud.Homework
 import com.example.studyflow.repository.CoursesRepository
@@ -29,7 +32,19 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.mapbox.maps.extension.style.expressions.dsl.generated.any
 
+
+//progress_fragment contains the code for displaying the progress of the user in a line chart
+//the user can select a course from the dropdown menu and view their progress in that course
+//the progress is displayed in a line chart
+
+
+
+
+
 class progress_fragment : Fragment() {
+
+
+    //variables
     lateinit var courseNames : MutableList<String>
     private lateinit var courseIds : MutableList<String>
     private lateinit var  showBtn : Button
@@ -39,19 +54,29 @@ class progress_fragment : Fragment() {
     private val CR = CoursesRepository()
 
 
+    //to hold homework names for AR
+    private var homeworkNames: MutableList<String> = mutableListOf()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
 
         //INFLATE layout
         val view = inflater.inflate(R.layout.progress_fragment, container, false)
 
         // items from the layout
         //val anyChartView: AnyChartView = view.findViewById(R.id.any_chart_view)
+
         val courseAutoC = view.findViewById<AutoCompleteTextView>(R.id.InputTypeAutoC)
+
         showBtn = view.findViewById(R.id.showProgressBtn)
+
         progressTV = view.findViewById(R.id.progressTV)
+
         lineChart = view.findViewById(R.id.Linechart)
 
 
@@ -59,6 +84,61 @@ class progress_fragment : Fragment() {
 
         courseNames = mutableListOf<String>()
         courseIds = mutableListOf<String>()
+
+
+        //FIND THE OPEN IN AR BUTTON
+        val viewInARButton = view.findViewById<Button>(R.id.viewInARButton)
+
+        //SET ON CLICK LISTENER FOR THE OPEN IN AR BUTTON
+
+        viewInARButton.setOnClickListener {
+            if (lineChart.data != null) {
+
+                // Serialize data entries - x and y values as flota
+
+                //creating data entries to hold the x and y values
+                val dataEntries = mutableListOf<Pair<Float, Float>>()
+
+                //iterate through all data entries
+                for (i in 0 until lineChart.data.getDataSetByIndex(0).entryCount) {
+
+
+
+                    //get the entry at index i
+                    val entry = lineChart.data.getDataSetByIndex(0).getEntryForIndex(i)
+
+
+                    //add the x and y values to the dataEntries list
+                    dataEntries.add(Pair(entry.x, entry.y))
+                }
+
+                // get array homework data
+                val homeworkNamesArray = homeworkNames.toTypedArray()
+
+                // start ar_activity
+                val intent = Intent(requireContext(), ar_activity::class.java)
+                intent.putExtra("dataEntries", ArrayList(dataEntries))
+                intent.putExtra("homeworkNames", homeworkNamesArray)
+
+
+
+                startActivity(intent)
+
+
+            } else {
+
+
+                // Show a message if no data is available
+
+
+                progressTV.text = "No Chart Data available."
+
+
+
+                progressTV.visibility = View.VISIBLE
+            }
+        }
+
 
 
 
@@ -76,13 +156,20 @@ class progress_fragment : Fragment() {
 
         showBtn.setOnClickListener {
             val chosenCourseName = courseAutoC.text.toString()
-            val chosenCourseID = courseIds[courseNames.indexOf(chosenCourseName)]
+            if (chosenCourseName.isNotEmpty()) {
+                lineChart.clear()
+                homeworkNames.clear()
+                val chosenCourseID = courseIds[courseNames.indexOf(chosenCourseName)]
 
-            HWR.getSortedSpecificHomworks(chosenCourseID) {homeworks ->
-                val HWlist1 = homeworks
-                Log.d("HCT1" , HWlist1.toString())
-                setChartByCourse2(chosenCourseName,HWlist1,lineChart)
+                HWR.getSortedSpecificHomworks(chosenCourseID) { homeworks ->
+                    val HWlist1 = homeworks
+                    Log.d("HCT1", HWlist1.toString())
+                    setChartByCourse2(chosenCourseName, HWlist1, lineChart)
 
+                }
+            }
+            else {
+                courseAutoC.error = "Field required"
             }
 
         }
@@ -95,7 +182,7 @@ class progress_fragment : Fragment() {
 
     private fun setChartByCourse2(courseName: String, HWList: List<Homework>, lineChart: LineChart) {
         val dataEntries = mutableListOf<Entry>()
-        val homeworkNames = mutableListOf<String>()
+
 
         // Populate the data entries for the selected course
         var i = 0
@@ -140,27 +227,47 @@ class progress_fragment : Fragment() {
             xAxis.textSize = 12f
             xAxis.setDrawGridLines(false)
             xAxis.valueFormatter = object : ValueFormatter() {
+
+
                 override fun getFormattedValue(value: Float): String {
                     // Return the corresponding homework name based on the index
                     var index = value.toInt()
                     return if (index >= 0 && index < homeworkNames.size) homeworkNames[index] else ""
                 }
             }
-            // Add padding to the x-axis
-            xAxis.axisMinimum = -0.5f // Add padding to the left
-            xAxis.axisMaximum = dataEntries.size - 0.5f // Add padding to the right
 
 
+            //Customizing X axis of the graph
+
+            xAxis.axisMinimum = -0.5f // padding on the left
+            xAxis.axisMaximum = dataEntries.size - 0.5f // padding on the right
+
+
+
+            // Customize Y-Axis
+
+            //variable to hold y axis
             val yAxisLeft: YAxis = lineChart.axisLeft
+
+
+            //customizing y axis
             yAxisLeft.setDrawGridLines(false)
             yAxisLeft.textSize = 12f
-            yAxisLeft.axisMinimum = 0f // Minimum value for y-axis
-            yAxisLeft.axisMaximum = 100f // Maximum value for y-axis
 
+
+            //set values max and min
+            yAxisLeft.axisMinimum = 0f
+            yAxisLeft.axisMaximum = 100f
+
+
+            // right y axis is
             val yAxisRight: YAxis = lineChart.axisRight
+
+            //disable right y axis
             yAxisRight.isEnabled = false
 
 
+            //customizing line chart
             lineChart.description.isEnabled = false
             lineChart.legend.isEnabled = true
             lineChart.setTouchEnabled(true)

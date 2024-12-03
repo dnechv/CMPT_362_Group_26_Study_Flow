@@ -26,12 +26,14 @@ class HomeworkViewModel:ViewModel() {
 
     //function to add homework to the database
     fun addHomework(homework: Homework) {
+        // First, push it to Firebase
+        val newId = homeworkRepository.addHomework(homework)
+        val newHw = homework.copy(id = newId)
+        // Then, add it to the local list
+        _homework.value = _homework.value?.plus(newHw) ?: listOf(homework)
 
-        // First, add it to the local list
-        _homework.value = _homework.value?.plus(homework) ?: listOf(homework)
 
-        // Then, push it to Firebase
-        homeworkRepository.addHomework(homework)
+
     }
 
     //function to get homework from the database

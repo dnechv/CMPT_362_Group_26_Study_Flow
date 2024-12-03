@@ -1,0 +1,22 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ar_activity_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Conde contains xml for AR View -->
+    <!-- Includes CameraPreview as a background'-->
+
+    <!-- Camera preview -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewViewCamera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- LineChart -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChartAR"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" />
+</FrameLayout>

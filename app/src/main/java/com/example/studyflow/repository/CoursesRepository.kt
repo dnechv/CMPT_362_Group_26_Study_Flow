@@ -65,8 +65,9 @@ class CoursesRepository {
                         else -> emptyList()
                     }
 
-                    //build course object manually
+                    //build the courses
                     Courses(
+
                         id = document.id,
                         courseCode = document.getString("courseCode") ?: "",
                         courseDays = courseDays,

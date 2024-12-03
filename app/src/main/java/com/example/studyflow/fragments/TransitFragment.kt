@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
@@ -43,11 +42,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.android.volley.Request
+import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.composables.core.HorizontalSeparator
 import com.example.studyflow.R
+import com.example.studyflow.database_cloud.Trip
+import com.example.studyflow.repository.TripsRepository
+import com.example.studyflow.view_models.TransitViewModel
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CoordinateBounds
@@ -76,6 +80,8 @@ import kotlinx.datetime.toLocalDateTime
 // This fragment allows the user to see transit options
 @OptIn(ExperimentalFoundationApi::class)
 class TransitFragment : Fragment() {
+    private val viewModel: TransitViewModel by viewModels()
+    private lateinit var requestQueue: RequestQueue
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,13 +92,15 @@ class TransitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requestQueue = Volley.newRequestQueue(context)
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
+        viewModel.loadTrips()
 
         composeView.setContent {
             MaterialTheme(
                 colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
             ) {
-                TransitFragmentComposable()
+                TransitFragmentComposable(viewModel)
             }
         }
 
@@ -101,8 +109,7 @@ class TransitFragment : Fragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TransitFragmentComposable() {
-        val requestQueue = Volley.newRequestQueue(context)
+    fun TransitFragmentComposable(viewModel: TransitViewModel) {
         var stop by remember {
             mutableStateOf<Stop?>(null)
         }
@@ -114,6 +121,9 @@ class TransitFragment : Fragment() {
         }
         var departures by remember {
             mutableStateOf(emptyList<Departure>())
+        }
+        var favouriteTrips by remember {
+            mutableStateOf(viewModel.getTrips()) // hack
         }
         val sheetState = rememberBottomSheetState(
             initialValue = SheetValue.Collapsed,
@@ -135,6 +145,7 @@ class TransitFragment : Fragment() {
                 bearing(0.0)
             }
         }
+
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
             sheetContent = {
@@ -153,11 +164,11 @@ class TransitFragment : Fragment() {
                             NoDepartures()
                         } else {
                             LazyColumn {
-                                items(departures) { DepartureRow(it) }
+                                items(departures) { DepartureRow(it, stop!!) }
                             }
                         }
                     } else {
-                        FavouriteTrips()
+                        FavouriteTrips(favouriteTrips)
                         Spacer(modifier = Modifier.weight(1.0f))
                     }
                 }
@@ -232,14 +243,19 @@ class TransitFragment : Fragment() {
     }
 
     @Composable
-    fun FavouriteTrips() {
+    fun FavouriteTrips(trips: List<Trip>) {
         Column(Modifier.padding(20.dp, 4.dp)) {
             Text("Favourite trips", style = MaterialTheme.typography.titleLarge)
             Text(
                 stringResource(R.string.transit_action_hint),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(4.dp, 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp, 16.dp)
             )
+        }
+        LazyColumn {
+            items(trips) { Text(it.id) }
         }
     }
 
@@ -290,7 +306,7 @@ class TransitFragment : Fragment() {
     }
 
     @Composable
-    fun DepartureRow(departure: Departure) {
+    fun DepartureRow(departure: Departure, stop: Stop) {
         val zone = TimeZone.of("America/Vancouver")
         val timeTillDeparture = Clock.System.now().periodUntil(departure.time, zone)
         val estimatedDepartureText = if (timeTillDeparture.hours > 0) {
@@ -312,7 +328,10 @@ class TransitFragment : Fragment() {
         } else {
             stringResource(R.string.transit_departure_minutes, timeTillDeparture.minutes)
         }
-        var checked by remember { mutableStateOf(false) }
+        var checked by remember {
+            mutableStateOf(
+                viewModel.getTrips().any { it.route == departure.route && it.stop == stop.id })
+        }
         Row(
             Modifier
                 .fillMaxWidth()

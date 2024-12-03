@@ -52,7 +52,7 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
 
 
-    //firebase boom
+    // Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
 
     //firebase services that we want to use - analytics as example

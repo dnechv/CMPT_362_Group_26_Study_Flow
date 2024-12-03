@@ -41,6 +41,12 @@ private lateinit var addHWBtn : FloatingActionButton
 private var lastDeletedHW: Homework? = null
 private var lastDeletedHWPosition: Int? = null
 
+private var dateAndTimeInt : Long = 0
+//to handle the order of the homeworks based on the date and time
+private var TimeInt = ""
+private var dateInt = 0
+
+
 
 
 class homework_fragment : Fragment() {
@@ -205,16 +211,20 @@ class homework_fragment : Fragment() {
             val HWDueTime = dueTimeBtn.text
             val HWDueDate = dueDateBtn.text
             val HWDesc = dialogView.findViewById<EditText>(R.id.hwDesc).text.toString()
+            dateAndTimeInt = ("${dateInt}${TimeInt}").toLong()
 
 
             //check if the fields are not empty
-            if (HWName.isNotEmpty() && HWDueTime.isNotEmpty() && HWDueTime.isNotEmpty()) {
-                val newHW = Homework(homeworkName = HWName, homeworkDueDate = HWDueDate.toString(),homeworkDueTime = HWDueTime.toString(), courseName = courseName, homeworkDescription = HWDesc , courseId = courseID )
+            if (HWName.isNotEmpty() && HWDueTime != "Select Due Time" && HWDueDate != "Select Due Date") {
+                val newHW = Homework(homeworkName = HWName, homeworkDueDate = HWDueDate.toString(),homeworkDueTime = HWDueTime.toString(), homeworkDueDateTimeInt = dateAndTimeInt, courseName = courseName, homeworkDescription = HWDesc , courseId = courseID )
                 homeworkViewModel.addHomework(newHW) // Add the hw
                 // homeworkViewModel.getHomework() //refresh
                 dialog.dismiss()
             } else {
-                dialogView.findViewById<EditText>(R.id.nameET).error = "Field required"
+                //dialogView.findViewById<EditText>(R.id.nameET).error = "Field required"
+                if (HWName.isEmpty()) dialogView.findViewById<EditText>(R.id.nameET).error = "Field required"
+                if (HWDueDate == "Select Due Date") dueDateBtn.error = "Select due date"
+                if (HWDueTime == "Select Due Time") dueTimeBtn.error = "Select due time"
             }
         }
     }
@@ -240,6 +250,12 @@ class homework_fragment : Fragment() {
         homeworkDescEditText.setText(hw.homeworkDescription)
         courseNameEt.setText(hw.courseName)
 
+        TimeInt = (hw.homeworkDueDateTimeInt % 10000).toString()
+        dateInt = (hw.homeworkDueDateTimeInt.toString().take(8)).toInt()
+        Log.d("DTSTIme1", TimeInt)
+        Log.d("DTSTIme3", dateInt.toString())
+
+
         homeworkDueDateBtn.setOnClickListener{
             showDatePickerDialog { selectedDate ->
                 homeworkDueDateBtn.text = selectedDate
@@ -257,11 +273,15 @@ class homework_fragment : Fragment() {
             .setCustomTitle(editHwTitleDialog)
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
+                Log.d("DTSTIme", TimeInt)
+                dateAndTimeInt = ("${dateInt}${TimeInt}").toLong()
+                Log.d("DTSdateTIme", dateAndTimeInt.toString())
                 // Update the course details
                 val updatedHW = hw.copy(
                     homeworkName = homeworkNameEditText.text.toString(),
                     homeworkDueDate = homeworkDueDateBtn.text.toString(),
                     homeworkDueTime = homeworkDueTimeBtn.text.toString(),
+                    homeworkDueDateTimeInt = dateAndTimeInt,
                     homeworkMark = homeworkMarkEditText.text.toString(),
                     homeworkDescription = homeworkDescEditText.text.toString()
                 )
@@ -284,6 +304,19 @@ class homework_fragment : Fragment() {
 
             //format the  date
             val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+            val selectedMonthTrue = selectedMonth + 1
+            var dayString = selectedDay.toString()
+            var monthString = selectedMonthTrue.toString()
+            if (selectedDay<10) {
+                dayString = "0$selectedDay"
+                Log.d("DTS", dayString)
+            }
+            if (selectedMonthTrue<10) {
+                monthString = "0$selectedMonthTrue"
+            }
+            val formattedDateInt = "$selectedYear${monthString}$dayString"
+            dateInt = formattedDateInt.toInt()
+            Log.d("DTSdateInt", dateInt.toString())
             onDateSelected(formattedDate)
         }, year, month, day).show()
     }
@@ -295,6 +328,21 @@ class homework_fragment : Fragment() {
 
         TimePickerDialog(requireContext(), { _, selectedHour, selectedMinute ->
             val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+            var minString = selectedMinute.toString()
+            var hourString = selectedHour.toString()
+            if (selectedMinute<10) {
+                minString = "0$selectedMinute"
+                Log.d("DTS", minString)
+            }
+            if (selectedHour<10) {
+                hourString = "0$selectedHour"
+            }
+            val formattedTimeInt = "$hourString$minString"
+
+            //dateAndTimeInt = formattedTimeInt.toInt()
+            TimeInt = formattedTimeInt
+            Log.d("DTS", TimeInt)
+
             onTimeSelected(formattedTime)
         }, hour, minute, true).show()
     }

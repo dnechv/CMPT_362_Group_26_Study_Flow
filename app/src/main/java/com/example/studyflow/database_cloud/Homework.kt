@@ -14,5 +14,6 @@ data class Homework(
     val courseId: String = "",
     val homeworkDueDate: String = "",
     val homeworkDueTime: String = "",
+    val homeworkDueDateTimeInt: Long = 0,
     val homeworkMark: String = ""
 )

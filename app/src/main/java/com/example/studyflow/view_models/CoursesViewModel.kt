@@ -8,6 +8,8 @@ import com.example.studyflow.database_cloud.Courses
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.studyflow.database_cloud.Homework
+import com.example.studyflow.repository.HomeworkRepository
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 
@@ -26,6 +28,7 @@ class CoursesViewModel : ViewModel() {
 
     //repository variable
     private val coursesRepository = CoursesRepository()
+    private val HwRep = HomeworkRepository()
 
     //livedata -> observe changes in the data
     private val _courses = MutableLiveData<List<Courses>>()
@@ -70,6 +73,20 @@ fun updateCourse(course: Courses) {
     //delete the course from database
     fun deleteCourse(course: Courses) {
         Log.d("CoursesViewModel", "Attempting to add course: $course")
+        val courseID = course.id
+        var Hws = listOf<Homework>()
+        HwRep.getHomework { homework: List<Homework> ->
+            Hws = homework
+            Log.d("DHW", Hws.toString())
+            for (homework in Hws) {
+                Log.d("DHW1", homework.toString())
+                if (homework.courseId == courseID) {
+                    HwRep.deleteHomework(homework)
+                    Log.d("DHW2", homework.toString())
+                }
+            }
+        }
+
         coursesRepository.deleteCourse(course)
     }
 }

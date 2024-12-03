@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -155,13 +156,20 @@ class progress_fragment : Fragment() {
 
         showBtn.setOnClickListener {
             val chosenCourseName = courseAutoC.text.toString()
-            val chosenCourseID = courseIds[courseNames.indexOf(chosenCourseName)]
+            if (chosenCourseName.isNotEmpty()) {
+                lineChart.clear()
+                homeworkNames.clear()
+                val chosenCourseID = courseIds[courseNames.indexOf(chosenCourseName)]
 
-            HWR.getSortedSpecificHomworks(chosenCourseID) {homeworks ->
-                val HWlist1 = homeworks
-                Log.d("HCT1" , HWlist1.toString())
-                setChartByCourse2(chosenCourseName,HWlist1,lineChart)
+                HWR.getSortedSpecificHomworks(chosenCourseID) { homeworks ->
+                    val HWlist1 = homeworks
+                    Log.d("HCT1", HWlist1.toString())
+                    setChartByCourse2(chosenCourseName, HWlist1, lineChart)
 
+                }
+            }
+            else {
+                courseAutoC.error = "Field required"
             }
 
         }

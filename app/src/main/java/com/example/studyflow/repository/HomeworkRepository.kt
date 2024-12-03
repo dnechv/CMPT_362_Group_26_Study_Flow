@@ -4,13 +4,14 @@ package com.example.studyflow.repository
 import com.example.studyflow.database_cloud.Homework
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
+import com.example.studyflow.adapters.HomeworkAdapter
 
 //handles data operations with firebase for homework
 
 class HomeworkRepository {
 
-        //creating database variable
-        private val firebaseDataBase = FirebaseFirestore.getInstance()
+    //creating database variable
+    private val firebaseDataBase = FirebaseFirestore.getInstance()
 
 
 
@@ -24,18 +25,20 @@ class HomeworkRepository {
 
 
     //adds homework to the database
-    fun addHomework(homework: Homework) {
+    fun addHomework(homework: Homework) : String {
         val docRef = firebaseDataBase.collection("homework").document()
         val hwID = homework.copy(id = docRef.id)
         docRef.set(hwID)
 
             .addOnSuccessListener {
                 Log.d("HomeworkRepository", "Homework added successfully")
+
             }
             .addOnFailureListener { exception ->
                 Log.d("HomeworkRepository", "Failed to add homework", exception)
 
             }
+        return hwID.id
     }
 
     //function to get homework from the database
@@ -68,8 +71,8 @@ class HomeworkRepository {
 
 
         firebaseDataBase.collection("homework")
+            .orderBy("homeworkDueDateTimeInt")
             .whereEqualTo("courseId", chosenCourse )
-            .orderBy("homeworkDueDate")
             .get()
 
 

@@ -18,7 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
@@ -32,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -151,10 +157,7 @@ class TransitFragment : Fragment() {
                             }
                         }
                     } else {
-                        Text(
-                            stringResource(R.string.transit_action_hint),
-                            Modifier.padding(20.dp, 8.dp)
-                        )
+                        FavouriteTrips()
                         Spacer(modifier = Modifier.weight(1.0f))
                     }
                 }
@@ -229,6 +232,18 @@ class TransitFragment : Fragment() {
     }
 
     @Composable
+    fun FavouriteTrips() {
+        Column(Modifier.padding(20.dp, 4.dp)) {
+            Text("Favourite trips", style = MaterialTheme.typography.titleLarge)
+            Text(
+                stringResource(R.string.transit_action_hint),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(4.dp, 16.dp)
+            )
+        }
+    }
+
+    @Composable
     fun StopInfo(stop: Stop) {
         Column(Modifier.padding(20.dp, 4.dp)) {
             Text(stop.name, style = MaterialTheme.typography.titleLarge)
@@ -297,17 +312,27 @@ class TransitFragment : Fragment() {
         } else {
             stringResource(R.string.transit_departure_minutes, timeTillDeparture.minutes)
         }
+        var checked by remember { mutableStateOf(false) }
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(20.dp, 16.dp)
         ) {
             Column {
-                Text(departure.route, style = MaterialTheme.typography.headlineSmall)
+                Text(departure.route, style = MaterialTheme.typography.headlineLarge)
                 Text(departure.destination)
             }
             Spacer(modifier = Modifier.weight(1.0f))
-            Text(estimatedDepartureText, Modifier.wrapContentHeight())
+            Column {
+                Text(estimatedDepartureText, Modifier.wrapContentHeight())
+                IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
+                    if (checked) {
+                        Icon(Icons.Filled.Star, "Remove as favourite")
+                    } else {
+                        Icon(painterResource(R.drawable.outlined_star), "Save as favourite")
+                    }
+                }
+            }
         }
         HorizontalSeparator(color = Color(0xFF9E9E9E))
     }

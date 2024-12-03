@@ -3,22 +3,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    >
 
-    <!-- Progress Fragment title -->
     <TextView
-        android:id="@+id/office_hours_label"
+        android:id="@+id/current_term_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Progress Fragment"
+        android:text="Your Progress"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        />
 
-    <!-- AnyChart for graph -->
-    <com.anychart.AnyChartView
-        android:id="@+id/any_chart_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="16dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:layout_marginHorizontal="15dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/InputTypeAutoC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="choose a course"
+                android:text=""
+                android:inputType="none"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/showProgressBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"/>
+
+
+
+        <!-- Progress Fragment title -->
+        <TextView
+            android:id="@+id/progressTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Progress Fragment"
+            android:textSize="14sp"
+            android:visibility="invisible"/>
+
+        <!-- MPAndroidchart for graph -->
+
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/Linechart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="18dp"
+            />
+
+
+        <!-- "View in AR" Button -->
+        <Button
+            android:id="@+id/viewInARButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View in AR"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            />
+
+
+
+    </LinearLayout>
+
+
+
+
+
 
 </LinearLayout>

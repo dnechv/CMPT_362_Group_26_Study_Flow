@@ -10,7 +10,9 @@ import com.example.studyflow.adapters.CoursesAdapter.ViewHolder
 import com.example.studyflow.database_cloud.Courses
 import com.example.studyflow.database_cloud.Homework
 
-class HomeworkAdapter(private var homeworks: MutableList<Homework>) : RecyclerView.Adapter<HomeworkAdapter.ViewHolder>() {
+class HomeworkAdapter(private var homeworks: MutableList<Homework>, private val onItemClickListener: (Homework) -> Unit) : RecyclerView.Adapter<HomeworkAdapter.ViewHolder>() {
+
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         private val HWName: TextView = itemView.findViewById(R.id.HW_name_item_tableview)
@@ -18,11 +20,21 @@ class HomeworkAdapter(private var homeworks: MutableList<Homework>) : RecyclerVi
         private val HWcourse: TextView = itemView.findViewById(R.id.HW_course_item_tableview)
 
         //binding data to views
-        fun bind(homework: Homework) {
+        fun bind(homework: Homework, onItemClickListener: (Homework) -> Unit) {
+            val dueDateTime = "${homework.homeworkDueDate} ${homework.homeworkDueTime}"
             HWName.text = homework.homeworkName //setting the homework name
-            HWdue.text = homework.homeworkDueTime //setting the homework term
+            HWdue.text = "${homework.homeworkDueDate} ${homework.homeworkDueTime}" //setting the homework due
             HWcourse.text = homework.courseName  //setting the homework course name
+
+            itemView.setOnClickListener {
+
+                // pass the course to the onItemClickListener
+                onItemClickListener(homework)
+            }
         }
+
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,7 +48,7 @@ class HomeworkAdapter(private var homeworks: MutableList<Homework>) : RecyclerVi
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val HW = homeworks[position]
-        holder.bind(HW)
+        holder.bind(HW, onItemClickListener)
     }
 
     fun updateHW(newHW: List<Homework>) {

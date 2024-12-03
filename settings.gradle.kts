@@ -18,6 +18,9 @@ dependencyResolutionManagement {
 
         maven { url = uri("https://jitpack.io") }
 
+        // Add Filament repository
+        maven { url = uri("https://raw.githubusercontent.com/google/filament/main/android/maven/") }
+
         mavenCentral()
         // Mapbox Maven repository
         maven {

@@ -9,10 +9,16 @@ import com.example.studyflow.adapters.HomeworkAdapter
 import com.example.studyflow.database_cloud.Homework
 import com.google.android.material.snackbar.Snackbar
 
+
+
+
 class HomeWorkSwipeGesture (
 
 
     //variables
+
+
+    //adapter for homework
     private val HWAdapter: HomeworkAdapter,
 
 
@@ -27,16 +33,31 @@ class HomeWorkSwipeGesture (
 
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
-    //swipe left - delete course
+    //DRAG AND DROP not supported to false
     override fun onMove(
+
+        //recycler view
         recyclerView: RecyclerView,
+
+        //view holder of the recycler view -> courses
         viewHolder: RecyclerView.ViewHolder,
+
+
+        //target ->
         target: RecyclerView.ViewHolder
     ): Boolean {
+
+
+        //ALWAYS RETURNS FALSE
         return false
     }
 
-    //swipe left
+
+
+
+
+
+    //swipe left gesture
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
 
@@ -45,9 +66,11 @@ class HomeWorkSwipeGesture (
 
 
 
+        //check the position
         when (direction){
 
 
+            //left
             ItemTouchHelper.LEFT -> {
 
 
@@ -102,14 +125,20 @@ class HomeWorkSwipeGesture (
 
     //draw the background - when swipped
     override fun onChildDraw(
-        c: Canvas,
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        dX: Float,
-        dY: Float,
-        actionState: Int,
+
+
+        c: Canvas, //canvas
+        recyclerView: RecyclerView, //recycler view
+        viewHolder: RecyclerView.ViewHolder,//view holder of the recycler view -> courses
+        dX: Float, //swipe on x
+        dY: Float, //swipe on y
+        actionState: Int, // interaction type swipe or etc
         isCurrentlyActive: Boolean
+
+
     ) {
+
+        //call the super class
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
 
         //itemView variable
@@ -118,11 +147,13 @@ class HomeWorkSwipeGesture (
         //background color
         val background = ColorDrawable(Color.RED)
 
-        //draw background
+        //draw background -> defines the area of canvas
         background.setBounds(
 
+            //left swipe -> dx becomes negative adjusting the background
             viewHolder.itemView.right + dX.toInt(),
 
+            //top, right, bottom bounds
             viewHolder.itemView.top,
 
             viewHolder.itemView.right,
@@ -141,26 +172,33 @@ class HomeWorkSwipeGesture (
 
             //paint of the text
             val paint = android.graphics.Paint().apply {
+
                 color = android.graphics.Color.WHITE
                 textSize = 50f
                 textAlign = android.graphics.Paint.Align.CENTER
                 isAntiAlias = true
+
 
             }
 
 
             //draw the text - > positioned in the centre
 
-            // calculate the text position
+            // calculate the text position -> dynamically placing the text for better UI
 
+            //padding relative to the items edge -> readability of the text
             val textPadding = 450f
 
+
+            //horizontal positioning of the text
             val textX = itemView.right + dX + textPadding
 
+            //vertical position of the text
             val textY = itemView.top + (itemView.height / 2f) - (paint.descent() + paint.ascent()) / 2
 
-            // draw the text
+            // draw the text only within bounds
             if (textX < itemView.right) {
+
 
             }
             c.drawText(text, textX, textY, paint)
@@ -170,13 +208,19 @@ class HomeWorkSwipeGesture (
         } else if (dX > 0) {
 
 
+            //blue background
+            background.color = Color.BLUE
 
-            background.color = Color.BLUE //set the background color for swipe right
-
+            //draw the background
             background.setBounds(
+
                 itemView.left,
+
                 itemView.top,
+
+                //right swipe -> dx becomes positive adjusting the background
                 itemView.left + dX.toInt(),
+
                 itemView.bottom
             )
             background.draw(c)
@@ -189,10 +233,15 @@ class HomeWorkSwipeGesture (
                 isAntiAlias = true
             }
             c.drawText(
+
+
                 "Swipe Right to Edit",
 
+
+                //position of the text -> dynamically placing the text for better UI as dx changes
                 itemView.left + dX / 2,
 
+                //vertical position of the text
                 itemView.top + itemView.height / 2f - (paint.descent() + paint.ascent()) / 2,
                 paint
 

@@ -12,7 +12,7 @@
         android:id="@+id/current_term_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Homework Fragment "
+        android:text="Your Homeworks"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginStart="16dp"

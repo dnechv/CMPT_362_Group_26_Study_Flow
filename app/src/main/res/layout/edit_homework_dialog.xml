@@ -2,29 +2,103 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+
+    <!-- ================================================================================================================= -->
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Course"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <EditText
         android:id="@+id/CourseNameTVEdit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:enabled="false"/>
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Homework Name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
     <EditText
         android:id="@+id/nameETEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"/>
+        android:hint="Enter homework name"
+        android:layout_marginBottom="16dp" />
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
 
-    <EditText
-        android:id="@+id/timeETEdit"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="time"/>
-
-    <EditText
-        android:id="@+id/markETEdit"
+        android:text="Due Date"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <Button
+        android:id="@+id/dueDateBtnEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mark in %"/>
+        android:text="Select Due Date"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Due Time"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <Button
+        android:id="@+id/dueTimeBtnEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Due Time"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mark"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <EditText
+        android:id="@+id/MarkETEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter homework mark"
+        android:layout_marginBottom="16dp"
+        android:inputType="numberDecimal"/>
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <EditText
+        android:id="@+id/hwDescEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter homework name"
+        android:layout_marginBottom="16dp" />
+
+
 
 </LinearLayout>

@@ -19,6 +19,10 @@ import com.example.studyflow.adapters.CoursesAdapter
 import com.example.studyflow.database_cloud.Courses
 import com.google.android.material.snackbar.Snackbar
 
+
+//the following class defines the logic for swiping left and right on a homework item
+//swiping left deletes the homework item using recycler view
+
 class SwipeGesture (
 
 
@@ -37,12 +41,14 @@ class SwipeGesture (
 
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
-    //swipe left - delete course
+    //drap and drop not supported but this method must be impemented
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
+
+        //ALWAYS RETURNS FALSE
         return false
     }
 
@@ -79,6 +85,7 @@ class SwipeGesture (
                 .setAction("Undo") {
                     coursesAdapter.restoreCourse(deletedCourse, position)
                 }
+
                 .show()
         }
 
@@ -131,6 +138,8 @@ class SwipeGesture (
         //draw background
         background.setBounds(
 
+
+            //left swipe -> dx becomes negative adjusting the background
             viewHolder.itemView.right + dX.toInt(),
 
             viewHolder.itemView.top,
@@ -139,6 +148,7 @@ class SwipeGesture (
 
             viewHolder.itemView.bottom
         )
+
         background.draw(c)
 
 
@@ -151,6 +161,7 @@ class SwipeGesture (
 
             //paint of the text
             val paint = android.graphics.Paint().apply {
+
                 color = android.graphics.Color.WHITE
                 textSize = 50f
                 textAlign = android.graphics.Paint.Align.CENTER
@@ -161,16 +172,22 @@ class SwipeGesture (
 
             //draw the text - > positioned in the centre
 
-            // calculate the text position
 
+            //padding relative to the items edge -> readability of the text
             val textPadding = 450f
 
+
+            //horizontal positioning of the text
             val textX = itemView.right + dX + textPadding
 
+
+            //vertical position of the text
             val textY = itemView.top + (itemView.height / 2f) - (paint.descent() + paint.ascent()) / 2
 
-            // draw the text
+            // draw the text only within bounds
             if (textX < itemView.right) {
+
+                //
 
             }
                 c.drawText(text, textX, textY, paint)
@@ -180,29 +197,49 @@ class SwipeGesture (
             } else if (dX > 0) {
 
 
+            //blue on swipe right
+            background.color = Color.BLUE
 
-            background.color = Color.BLUE //set the background color for swipe right
 
+            //set bounds
             background.setBounds(
+
                 itemView.left,
                 itemView.top,
+
+                //right swipe -> dx becomes positive adjusting the background
                 itemView.left + dX.toInt(),
+
+
                 itemView.bottom
+
             )
             background.draw(c)
 
             // EDIT TEXT
             val paint = android.graphics.Paint().apply {
+
+
+
                 color = Color.WHITE
                 textSize = 50f
                 textAlign = android.graphics.Paint.Align.CENTER
                 isAntiAlias = true
+
+
+
             }
             c.drawText(
+
+
                 "Swipe Right to Edit",
 
+
+                //position of the text -> dynamically placing the text for better UI as dx changes
                 itemView.left + dX / 2,
 
+
+                //vertical position of the text
                 itemView.top + itemView.height / 2f - (paint.descent() + paint.ascent()) / 2,
                 paint
 

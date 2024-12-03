@@ -2,29 +2,86 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+
+    <!-- ================================================================================================================= -->
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Course"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <EditText
         android:id="@+id/CourseNameTV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Homework Name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
     <EditText
         android:id="@+id/nameET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"/>
+        android:hint="Enter homework name"
+        android:layout_marginBottom="16dp" />
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
 
-    <EditText
-        android:id="@+id/timeET"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="time"/>
-
-    <EditText
-        android:id="@+id/markET"
+        android:text="Due Date"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <Button
+        android:id="@+id/dueDateBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Mark in %"/>
+        android:text="Select Due Date"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Due Time"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <Button
+        android:id="@+id/dueTimeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Due Time"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
+    <!-- /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\ -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+    <EditText
+        android:id="@+id/hwDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter homework name"
+        android:layout_marginBottom="16dp" />
+
+
 
 </LinearLayout>

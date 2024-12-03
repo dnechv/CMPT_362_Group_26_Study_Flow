@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,14 +18,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
@@ -174,6 +181,80 @@ class TransitFragment : Fragment() {
             }
         }
 
+        @Composable
+        fun StopInfo(stop: Stop) {
+            Column(Modifier.padding(20.dp, 4.dp)) {
+                Text(stop.name, style = MaterialTheme.typography.titleLarge)
+                if (stop.code != "") {
+                    Text(
+                        stringResource(R.string.transit_stop_subtitle, stop.code),
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                }
+                var selected by remember { mutableStateOf(false) }
+                selected = favouriteStops.any { it.id == stop.id }
+                FilterChip(
+                    onClick = {
+                        if (selected) {
+                            favouriteStops = favouriteStops.filter { it.id != stop.id }
+                            repository.removeFavouriteStop(stop.id)
+                        } else {
+                            favouriteStops = favouriteStops + stop
+                            repository.addFavouriteStop(stop.id)
+                        }
+                        selected = !selected
+                    },
+                    label = {
+                        Text("Favourite")
+                    },
+                    selected = selected,
+                    leadingIcon = if (selected) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = "Favourite icon",
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else {
+                        null
+                    },
+                )
+            }
+        }
+
+        fun prepareDeparturesRequest(stopId: Int): JsonObjectRequest {
+            return JsonObjectRequest(
+                Request.Method.GET,
+                "https://transit.cqng.ca/api/info/${stopId}/limit/10",
+                null,
+                { response ->
+                    requestError = false
+                    loading = false
+                    val departuresArray =
+                        response.getJSONArray("departures")
+                    departures =
+                        (0 until departuresArray.length()).map {
+                            val departure =
+                                departuresArray.getJSONObject(it)
+                            Departure(
+                                id = departure.getInt("id"),
+                                route = departure.getString("route"),
+                                destination = departure.getString("destination"),
+                                time = Instant.fromEpochMilliseconds(
+                                    departure.getLong(
+                                        "time"
+                                    )
+                                )
+                            )
+                        }
+                },
+                {
+                    requestError = true
+                    loading = false
+                })
+        }
+
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
             sheetContent = {
@@ -196,7 +277,45 @@ class TransitFragment : Fragment() {
                             }
                         }
                     } else {
-                        FavouriteStops(favouriteStops)
+                        Column(Modifier.padding(20.dp, 4.dp)) {
+                            Text("Favourite stops", style = MaterialTheme.typography.titleLarge)
+                            if (favouriteStops.isEmpty()) {
+                                Text(
+                                    stringResource(R.string.transit_action_hint),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp, 16.dp)
+                                )
+                            }
+                        }
+                        LazyColumn(Modifier.padding(0.dp, 8.dp)) {
+                            items(favouriteStops) {
+                                ListItem(
+                                    headlineContent = {
+                                        Text(it.name)
+                                    },
+                                    supportingContent = {
+                                        Text(it.code)
+                                    },
+                                    modifier = Modifier.clickable(true) {
+                                        departures = emptyList()
+                                        mapViewportState.flyTo(
+                                            cameraOptions {
+                                                if (mapViewportState.cameraState!!.zoom < 18.0) zoom(
+                                                    18.0
+                                                )
+                                                center(Point.fromLngLat(it.lon, it.lat))
+                                            }
+                                        )
+                                        stop = it
+                                        loading = true
+                                        val request = prepareDeparturesRequest(it.id)
+                                        requestQueue.add(request)
+                                    }
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.weight(1.0f))
                     }
                 }
@@ -219,33 +338,7 @@ class TransitFragment : Fragment() {
                                 }
                             )
                             loading = true
-                            val request = JsonObjectRequest(
-                                Request.Method.GET,
-                                "https://transit.cqng.ca/api/info/${stop!!.id}/limit/10",
-                                null,
-                                { response ->
-                                    requestError = false
-                                    loading = false
-                                    val departuresArray = response.getJSONArray("departures")
-                                    departures = (0 until departuresArray.length()).map {
-                                        val departure = departuresArray.getJSONObject(it)
-                                        Departure(
-                                            id = departure.getInt("id"),
-                                            route = departure.getString("route"),
-                                            destination = departure.getString("destination"),
-                                            time = Instant.fromEpochMilliseconds(
-                                                departure.getLong(
-                                                    "time"
-                                                )
-                                            )
-                                        )
-                                    }
-
-                                },
-                                {
-                                    requestError = true
-                                    loading = false
-                                })
+                            val request = prepareDeparturesRequest(stop!!.id)
                             requestQueue.add(request)
                         }
                     }
@@ -266,36 +359,6 @@ class TransitFragment : Fragment() {
                         ).build()
                     )
                 }
-            }
-        }
-    }
-
-    @Composable
-    fun FavouriteStops(favouriteStops: List<Stop>) {
-        Column(Modifier.padding(20.dp, 4.dp)) {
-            Text("Favourite stops", style = MaterialTheme.typography.titleLarge)
-            Text(
-                stringResource(R.string.transit_action_hint),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp, 16.dp)
-            )
-        }
-        LazyColumn {
-            items(favouriteStops) { Text(it.name) }
-        }
-    }
-
-    @Composable
-    fun StopInfo(stop: Stop) {
-        Column(Modifier.padding(20.dp, 4.dp)) {
-            Text(stop.name, style = MaterialTheme.typography.titleLarge)
-            if (stop.code != "") {
-                Text(
-                    stringResource(R.string.transit_stop_subtitle, stop.code),
-                    style = MaterialTheme.typography.titleSmall
-                )
             }
         }
     }
@@ -356,29 +419,17 @@ class TransitFragment : Fragment() {
         } else {
             stringResource(R.string.transit_departure_minutes, timeTillDeparture.minutes)
         }
-        var checked by remember {
-            mutableStateOf(false)
-        }
         Row(
             Modifier
                 .fillMaxWidth()
                 .padding(20.dp, 16.dp)
         ) {
             Column {
-                Text(departure.route, style = MaterialTheme.typography.headlineLarge)
+                Text(departure.route, style = MaterialTheme.typography.headlineSmall)
                 Text(departure.destination)
             }
             Spacer(modifier = Modifier.weight(1.0f))
-            Column {
-                Text(estimatedDepartureText, Modifier.wrapContentHeight())
-                IconToggleButton(checked = checked, onCheckedChange = { checked = it }) {
-                    if (checked) {
-                        Icon(Icons.Filled.Star, "Remove as favourite")
-                    } else {
-                        Icon(painterResource(R.drawable.outlined_star), "Save as favourite")
-                    }
-                }
-            }
+            Text(estimatedDepartureText, Modifier.wrapContentHeight())
         }
         HorizontalSeparator(color = Color(0xFF9E9E9E))
     }
@@ -407,7 +458,8 @@ class TransitFragment : Fragment() {
             val code: String,
             val name: String,
             val lat: Double,
-            val lon: Double
+            val lon: Double,
+            val routes: List<String>? = emptyList(),
         )
 
         data class Departure(

@@ -51,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
         val etPassword = findViewById<TextInputEditText>(R.id.passInpSignin)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val tvSignup = findViewById<TextView>(R.id.tvSignup)
+        val tvResetPass = findViewById<TextView>(R.id.tvRestPass)
         val errorShowTV = findViewById<TextView>(R.id.errorShowLogIn)
 
         // Handle login button click
@@ -86,6 +87,10 @@ class LoginActivity : AppCompatActivity() {
 
         tvSignup.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
+        }
+
+        tvResetPass.setOnClickListener {
+            startActivity(Intent(this, ResetPasswordActivity::class.java))
         }
     }
 

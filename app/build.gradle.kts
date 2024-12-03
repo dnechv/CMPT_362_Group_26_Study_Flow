@@ -18,9 +18,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
-
-
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
 
     buildTypes {
         release {
@@ -58,7 +61,22 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation ("com.google.firebase:firebase-auth:23.1.0")
 
-    implementation ("com.mapbox.maps:android:11.7.1")
+
+    implementation ("com.google.guava:guava:32.1.2-jre")
+
+
+
+
+
+
+
+
+
+    //CAMERA X
+    implementation ("androidx.camera:camera-core:1.3.0")
+    implementation ("androidx.camera:camera-view:1.3.0")
+    implementation ("androidx.camera:camera-lifecycle:1.3.0")
+    implementation ("androidx.camera:camera-camera2:1.3.0")
 
 
     implementation ("com.google.guava:guava:32.1.2-jre")
@@ -106,9 +124,8 @@ dependencies {
 
 
     implementation(libs.mapbox.android)
-
-
-    implementation(libs.mapbox.android)
+    implementation(libs.mapbox.maps.compose)
+    implementation(libs.advanced.bottomsheet.material3)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -117,9 +134,28 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.firestore.ktx) //firestore for firebase
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.volley)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.core)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-}
 
+    // Compose
+    val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
+    implementation(composeBom)
+    testImplementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.foundation:foundation-layout")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3.adaptive:adaptive")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+}

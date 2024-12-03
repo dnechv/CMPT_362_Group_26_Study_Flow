@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">StudyFlow</string>
     <string name="settings">Settings</string>
+    <!-- Transit -->
+    <string name="transit_action_hint">You don\'t have any trips saved. \nTap on a transit stop on the map to start.</string>
+    <string name="transit_departures_empty">No upcoming departures.</string>
+    <string name="transit_departures_error">Departures cannot be loaded at this time.</string>
+    <string name="transit_departures_loading">Loading…</string>
+    <string name="transit_departure_minutes">%1$d min</string>
+    <string name="transit_departure_now">Now</string>
+    <string name="transit_mapbox_style_uri" translatable="false">mapbox://styles/cyrusqng/cm38qzmej009t01q7gago6aoe</string>
+    <string name="transit_stop_subtitle">Stop code: %1$s</string>
 </resources>

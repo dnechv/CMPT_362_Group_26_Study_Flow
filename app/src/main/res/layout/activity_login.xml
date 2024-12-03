@@ -45,6 +45,13 @@
             android:inputType="textPassword"/>
 
     </com.google.android.material.textfield.TextInputLayout>
+    <TextView
+        android:layout_gravity="center_vertical"
+        android:id="@+id/tvRestPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot password?"
+        android:textColor="@android:color/holo_blue_dark" />
 
 
     <TextView
@@ -59,8 +66,7 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Login"
-        android:layout_marginTop="7dp"/>
+        android:text="Login" />
 
     <TextView
         android:layout_width="wrap_content"

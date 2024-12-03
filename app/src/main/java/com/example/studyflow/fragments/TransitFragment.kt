@@ -2,6 +2,7 @@ package com.example.studyflow.fragments
 
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,9 +51,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.composables.core.HorizontalSeparator
 import com.example.studyflow.R
-import com.example.studyflow.database_cloud.Trip
-import com.example.studyflow.repository.TripsRepository
-import com.example.studyflow.view_models.TransitViewModel
+import com.example.studyflow.repository.TransitRepository
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CoordinateBounds
@@ -80,8 +80,8 @@ import kotlinx.datetime.toLocalDateTime
 // This fragment allows the user to see transit options
 @OptIn(ExperimentalFoundationApi::class)
 class TransitFragment : Fragment() {
-    private val viewModel: TransitViewModel by viewModels()
     private lateinit var requestQueue: RequestQueue
+    private lateinit var repository: TransitRepository
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -93,14 +93,14 @@ class TransitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         requestQueue = Volley.newRequestQueue(context)
+        repository = TransitRepository()
         val composeView = view.findViewById<ComposeView>(R.id.compose_view)
-        viewModel.loadTrips()
 
         composeView.setContent {
             MaterialTheme(
                 colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
             ) {
-                TransitFragmentComposable(viewModel)
+                TransitFragmentComposable()
             }
         }
 
@@ -109,7 +109,7 @@ class TransitFragment : Fragment() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TransitFragmentComposable(viewModel: TransitViewModel) {
+    fun TransitFragmentComposable() {
         var stop by remember {
             mutableStateOf<Stop?>(null)
         }
@@ -122,8 +122,8 @@ class TransitFragment : Fragment() {
         var departures by remember {
             mutableStateOf(emptyList<Departure>())
         }
-        var favouriteTrips by remember {
-            mutableStateOf(viewModel.getTrips()) // hack
+        var favouriteStops by remember {
+            mutableStateOf(emptyList<Stop>())
         }
         val sheetState = rememberBottomSheetState(
             initialValue = SheetValue.Collapsed,
@@ -143,6 +143,34 @@ class TransitFragment : Fragment() {
                 center(Point.fromLngLat(-122.92, 49.28))
                 pitch(0.0)
                 bearing(0.0)
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            repository.getFavouriteStops {
+                if (it.isEmpty()) return@getFavouriteStops
+                Log.d("TransitFragment", "${it.size} favourite stops, requesting info...")
+                val request = JsonObjectRequest(
+                    Request.Method.GET,
+                    "https://transit.cqng.ca/api/stops/${it.joinToString(",")}",
+                    null,
+                    { response ->
+                        requestError = false
+                        loading = false
+                        val stopsArray = response.getJSONArray("stops")
+                        favouriteStops = (0 until stopsArray.length()).map { i ->
+                            val stopObject = stopsArray.getJSONObject(i)
+                            Stop(
+                                id = stopObject.getInt("id"),
+                                code = stopObject.getInt("code").toString(),
+                                name = stopObject.getString("name"),
+                                lat = stopObject.getDouble("lat"),
+                                lon = stopObject.getDouble("lon"),
+                            )
+                        }
+                    },
+                    {})
+                requestQueue.add(request)
             }
         }
 
@@ -168,7 +196,7 @@ class TransitFragment : Fragment() {
                             }
                         }
                     } else {
-                        FavouriteTrips(favouriteTrips)
+                        FavouriteStops(favouriteStops)
                         Spacer(modifier = Modifier.weight(1.0f))
                     }
                 }
@@ -243,9 +271,9 @@ class TransitFragment : Fragment() {
     }
 
     @Composable
-    fun FavouriteTrips(trips: List<Trip>) {
+    fun FavouriteStops(favouriteStops: List<Stop>) {
         Column(Modifier.padding(20.dp, 4.dp)) {
-            Text("Favourite trips", style = MaterialTheme.typography.titleLarge)
+            Text("Favourite stops", style = MaterialTheme.typography.titleLarge)
             Text(
                 stringResource(R.string.transit_action_hint),
                 textAlign = TextAlign.Center,
@@ -255,7 +283,7 @@ class TransitFragment : Fragment() {
             )
         }
         LazyColumn {
-            items(trips) { Text(it.id) }
+            items(favouriteStops) { Text(it.name) }
         }
     }
 
@@ -329,8 +357,7 @@ class TransitFragment : Fragment() {
             stringResource(R.string.transit_departure_minutes, timeTillDeparture.minutes)
         }
         var checked by remember {
-            mutableStateOf(
-                viewModel.getTrips().any { it.route == departure.route && it.stop == stop.id })
+            mutableStateOf(false)
         }
         Row(
             Modifier
@@ -365,13 +392,24 @@ class TransitFragment : Fragment() {
                 val id = it.queriedFeature.feature.properties()?.get("stop_id")?.asInt ?: -1
                 val code = it.queriedFeature.feature.properties()?.get("stop_code")?.asString
                 val name = it.queriedFeature.feature.properties()?.get("stop_name")?.asString
-                if (code != null && name != null) Stop(id = id, code = code, name = name) else null
+                if (code != null && name != null) {
+                    Stop(id, code, name, point.latitude(), point.longitude())
+                } else {
+                    null
+                }
             }
         }
 
     companion object {
         enum class SheetValue { Collapsed, PartiallyExpanded, Expanded }
-        data class Stop(val id: Int, val code: String, val name: String)
+        data class Stop(
+            val id: Int,
+            val code: String,
+            val name: String,
+            val lat: Double,
+            val lon: Double
+        )
+
         data class Departure(
             val id: Int,
             val route: String,
